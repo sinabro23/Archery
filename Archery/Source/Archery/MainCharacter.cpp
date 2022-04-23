@@ -88,11 +88,13 @@ void AMainCharacter::PostInitializeComponents()
 	if (MainAnim)
 	{
 		MainAnim->OnSendFireBall.AddUObject(this, &AMainCharacter::SendFireBall);
+		MainAnim->OnFireBallEnd.AddUObject(this, &AMainCharacter::AttackEnd);
 	}
 }
 
 void AMainCharacter::MoveForward(float Value)
 {
+
 	if (Controller && Value != 0.f)
 	{
 		// 컨트롤러기준 정면 구하기
@@ -106,6 +108,7 @@ void AMainCharacter::MoveForward(float Value)
 
 void AMainCharacter::MoveRight(float Value)
 {
+
 	if (Controller && Value != 0.f)
 	{
 		// 컨트롤러기준 정면 구하기
@@ -133,6 +136,11 @@ void AMainCharacter::LookUp(float Value)
 
 void AMainCharacter::FireWeapon()
 {
+	if (bIsAttacking)
+		return;
+
+	bIsAttacking = true;
+
 	if (MainAnim && AttackMontage)
 	{
 		MainAnim->Montage_Play(AttackMontage);
@@ -151,6 +159,11 @@ void AMainCharacter::EKeyReleased()
 	SkillRangeParticle->SetHiddenInGame(true);
 
 	// TODO ESkill 발사
+	if (MainAnim && AttackMontage)
+	{
+		MainAnim->Montage_Play(AttackMontage);
+		MainAnim->Montage_JumpToSection(FName("Cast"));
+	}
 }
 
 void AMainCharacter::ESkillTrail()
@@ -248,8 +261,8 @@ void AMainCharacter::SendFireBall()
 			{
 				// Beam end point is now trace hit location
 				BeamEndPoint = ScreenTraceHit.Location;
-				DrawDebugLine(GetWorld(), Start, BeamEndPoint, FColor::Red, false, 2.f);
-				DrawDebugPoint(GetWorld(), ScreenTraceHit.Location, 5.f, FColor::Red, false, 2.f);
+				//DrawDebugLine(GetWorld(), Start, BeamEndPoint, FColor::Red, false, 2.f);
+				//DrawDebugPoint(GetWorld(), ScreenTraceHit.Location, 5.f, FColor::Red, false, 2.f);
 			}
 
 			AFireBall* Fireball = GetWorld()->SpawnActor<AFireBall>(SocketTransform.GetLocation(), FRotator::ZeroRotator);
@@ -257,6 +270,13 @@ void AMainCharacter::SendFireBall()
 		}
 	}
 }
+
+void AMainCharacter::AttackEnd()
+{
+	bIsAttacking = false;
+}
+
+
 
 
 

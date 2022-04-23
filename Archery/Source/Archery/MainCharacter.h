@@ -6,6 +6,15 @@
 #include "GameFramework/Character.h"
 #include "MainCharacter.generated.h"
 
+
+enum class ECharacterState : uint8
+{
+	ECS_Normal, 
+	ECS_Cast,
+
+	ECS_MAX 
+};
+
 UCLASS()
 class ARCHERY_API AMainCharacter : public ACharacter
 {
@@ -28,6 +37,9 @@ public:
 	virtual void PostInitializeComponents() override;
 
 private:
+
+	ECharacterState CharacterState = ECharacterState::ECS_Normal;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
@@ -79,6 +91,9 @@ private:
 
 	bool IsEKeyPressed = false;
 	float ESkillRange = 3000.f;
+	
+
+	bool bIsAttacking = false;
 
 public:
 	void MoveForward(float Value);
@@ -96,4 +111,6 @@ public:
 
 	UFUNCTION()
 	void SendFireBall();
+
+	void AttackEnd();
 };

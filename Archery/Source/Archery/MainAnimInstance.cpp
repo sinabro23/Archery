@@ -53,3 +53,8 @@ void UMainAnimInstance::AnimNotify_SendFireBall()
 {
 	OnSendFireBall.Broadcast();
 }
+
+void UMainAnimInstance::AnimNotify_FireballAttackEnd()
+{
+	OnFireBallEnd.Broadcast();
+}

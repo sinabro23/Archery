@@ -7,6 +7,7 @@
 #include "MainAnimInstance.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnSendFireBallDelegate)
+DECLARE_MULTICAST_DELEGATE(FOnSendFireBallEndDelegate)
 /**
  * 
  */
@@ -46,6 +47,10 @@ public:
 	UFUNCTION()
 	void AnimNotify_SendFireBall();
 
+	UFUNCTION()
+	void AnimNotify_FireballAttackEnd();
+
 public:
 	FOnSendFireBallDelegate OnSendFireBall;
+	FOnSendFireBallEndDelegate OnFireBallEnd;
 };
