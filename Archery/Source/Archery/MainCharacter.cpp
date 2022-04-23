@@ -46,6 +46,12 @@ AMainCharacter::AMainCharacter()
 	}
 	SkillRangeParticle->SetActive(true);
 	SkillRangeParticle->SetHiddenInGame(true);
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_METEOR(TEXT("ParticleSystem'/Game/ParagonGideon/FX/Particles/Gideon/Abilities/Meteor/FX/P_Gideon_Meteor_Shower.P_Gideon_Meteor_Shower'"));
+	if (PS_METEOR.Succeeded())
+	{
+		MeteorParticle = PS_METEOR.Object;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -89,6 +95,7 @@ void AMainCharacter::PostInitializeComponents()
 	{
 		MainAnim->OnSendFireBall.AddUObject(this, &AMainCharacter::SendFireBall);
 		MainAnim->OnFireBallEnd.AddUObject(this, &AMainCharacter::AttackEnd);
+		MainAnim->OnCastingEnd.AddUObject(this, &AMainCharacter::SendMeteor);
 	}
 }
 
@@ -202,6 +209,7 @@ void AMainCharacter::ESkillTrail()
 			if (ScreenTraceHit.bBlockingHit) // was there a trace hit?
 			{
 				BeamEndPoint = ScreenTraceHit.Location;
+				MeteorPosition = ScreenTraceHit.Location + FVector(0.0f, 0.0f, 1000.f);
 				//DrawDebugLine(GetWorld(), Start, BeamEndPoint, FColor::Red, false, 2.f);
 				//DrawDebugPoint(GetWorld(), ScreenTraceHit.Location, 5.f, FColor::Red, false, 2.f);
 				SkillRangeParticle->SetHiddenInGame(false);
@@ -267,6 +275,20 @@ void AMainCharacter::SendFireBall()
 
 			AFireBall* Fireball = GetWorld()->SpawnActor<AFireBall>(SocketTransform.GetLocation(), FRotator::ZeroRotator);
 			Fireball->StartFireBall(CrosshairWorldDirection);
+		}
+	}
+}
+
+void AMainCharacter::SendMeteor()
+{
+	if (MainAnim && AttackMontage)
+	{
+		MainAnim->Montage_Play(AttackMontage);
+		MainAnim->Montage_JumpToSection(FName("Rift"));
+
+		if (MeteorParticle)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MeteorParticle, MeteorPosition);
 		}
 	}
 }

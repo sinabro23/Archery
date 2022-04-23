@@ -81,6 +81,9 @@ private:
 	class UParticleSystem* MuzzleFlash;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* MeteorParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UParticleSystemComponent* SkillRangeParticle;
 
 	/** Montage for firing the weapon */
@@ -89,9 +92,11 @@ private:
 
 	class UMainAnimInstance* MainAnim;
 
+	FVector MeteorPosition = FVector();
+
 	bool IsEKeyPressed = false;
-	float ESkillRange = 3000.f;
 	
+	float ESkillRange = 3000.f;
 
 	bool bIsAttacking = false;
 
@@ -111,6 +116,9 @@ public:
 
 	UFUNCTION()
 	void SendFireBall();
+
+	UFUNCTION()
+	void SendMeteor();
 
 	void AttackEnd();
 };

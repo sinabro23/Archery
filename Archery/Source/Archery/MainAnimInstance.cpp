@@ -58,3 +58,8 @@ void UMainAnimInstance::AnimNotify_FireballAttackEnd()
 {
 	OnFireBallEnd.Broadcast();
 }
+
+void UMainAnimInstance::AnimNotify_CastingEnd()
+{
+	OnCastingEnd.Broadcast();
+}

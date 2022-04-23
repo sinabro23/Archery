@@ -8,6 +8,7 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnSendFireBallDelegate)
 DECLARE_MULTICAST_DELEGATE(FOnSendFireBallEndDelegate)
+DECLARE_MULTICAST_DELEGATE(FOnCastingEndDelegate)
 /**
  * 
  */
@@ -50,7 +51,11 @@ public:
 	UFUNCTION()
 	void AnimNotify_FireballAttackEnd();
 
+	UFUNCTION()
+	void AnimNotify_CastingEnd();
+
 public:
 	FOnSendFireBallDelegate OnSendFireBall;
 	FOnSendFireBallEndDelegate OnFireBallEnd;
+	FOnCastingEndDelegate OnCastingEnd;
 };
