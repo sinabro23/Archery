@@ -4,6 +4,7 @@
 #include "MainAnimInstance.h"
 #include "MainCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UMainAnimInstance::UpdateAnimationProperties(float DeltaTime)
 {
@@ -11,6 +12,7 @@ void UMainAnimInstance::UpdateAnimationProperties(float DeltaTime)
 	{
 		MainCharacter = Cast<AMainCharacter>(TryGetPawnOwner());
 	}
+
 	if (MainCharacter)
 	{
 		// Get the lateral speed of the character from velocity
@@ -30,6 +32,10 @@ void UMainAnimInstance::UpdateAnimationProperties(float DeltaTime)
 		{
 			bIsAccelerating = false;
 		}
+
+		FRotator AimRotation = MainCharacter->GetBaseAimRotation();
+		FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(MainCharacter->GetVelocity());
+		MovementOffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;
 	}
 
 }

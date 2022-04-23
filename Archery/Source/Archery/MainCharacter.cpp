@@ -9,6 +9,8 @@
 #include "Sound/SoundCue.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "MainAnimInstance.h"
+#include "FireBall.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -19,7 +21,7 @@ AMainCharacter::AMainCharacter()
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 280.f;
 	CameraBoom->bUsePawnControlRotation = true; // 컨트롤러 기준으로 회전한다
-	CameraBoom->SocketOffset = FVector(0.f, 60.f, 70.f); // 카메라가 달릴 소켓을 움직임
+	CameraBoom->SocketOffset = FVector(0.f, 60.f, 90.f); // 카메라가 달릴 소켓을 움직임
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
@@ -136,7 +138,54 @@ void AMainCharacter::SendFireBall()
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
 		}
+
+		// Get current size of the viewport
+		FVector2D ViewportSize;
+		if (GEngine && GEngine->GameViewport)
+		{
+			GEngine->GameViewport->GetViewportSize(ViewportSize);
+		}
+
+		// Get screen space location of crosshairs
+		FVector2D CrosshairLocation(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
+		FVector CrosshairWorldPosition;
+		FVector CrosshairWorldDirection;
+
+		// Get world position and direction of crosshairs
+		bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
+			UGameplayStatics::GetPlayerController(this, 0),
+			CrosshairLocation,
+			CrosshairWorldPosition,
+			CrosshairWorldDirection);
+
+		if (bScreenToWorld) // was deprojection successful?
+		{
+			FHitResult ScreenTraceHit;
+			const FVector Start = CrosshairWorldPosition;
+			const FVector End = CrosshairWorldPosition + CrosshairWorldDirection * 50'000.f;
+
+			// Set beam end point to line trace end point
+			FVector BeamEndPoint = End;
+
+			// Trace outward from crosshairs world location
+			GetWorld()->LineTraceSingleByChannel(
+				ScreenTraceHit,
+				Start,
+				End,
+				ECollisionChannel::ECC_Visibility);
+			if (ScreenTraceHit.bBlockingHit) // was there a trace hit?
+			{
+				// Beam end point is now trace hit location
+				BeamEndPoint = ScreenTraceHit.Location;
+				DrawDebugLine(GetWorld(), Start, BeamEndPoint, FColor::Red, false, 2.f);
+				DrawDebugPoint(GetWorld(), ScreenTraceHit.Location, 5.f, FColor::Red, false, 2.f);
+			}
+
+			AFireBall* Fireball = GetWorld()->SpawnActor<AFireBall>(SocketTransform.GetLocation(), FRotator::ZeroRotator);
+			Fireball->StartFireBall(CrosshairWorldDirection);
+		}
 	}
 }
+
 
 
