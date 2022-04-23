@@ -14,6 +14,7 @@ AFireBall::AFireBall()
 
 	BoxCollsion = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	BoxCollsion->SetBoxExtent(FVector(16.f, 16.f, 16.f));
+	BoxCollsion->SetHiddenInGame(false);
 	SetRootComponent(BoxCollsion);
 
 	FireballParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("FireballParticle"));

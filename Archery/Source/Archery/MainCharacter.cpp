@@ -11,6 +11,7 @@
 #include "MainAnimInstance.h"
 #include "FireBall.h"
 #include "DrawDebugHelpers.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -36,6 +37,15 @@ AMainCharacter::AMainCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.f, 0.0f); // 이 로테이션레이트로 회전함
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+
+	SkillRangeParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("SkillRangeParticle"));
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_SKILLRANGE(TEXT("ParticleSystem'/Game/RPGEffects/Particles/P_Targeting_Player_Select.P_Targeting_Player_Select'"));
+	if (PS_SKILLRANGE.Succeeded())
+	{
+		SkillRangeParticle->SetTemplate(PS_SKILLRANGE.Object);
+	}
+	SkillRangeParticle->SetActive(true);
+	SkillRangeParticle->SetHiddenInGame(true);
 }
 
 // Called when the game starts or when spawned
@@ -49,6 +59,7 @@ void AMainCharacter::BeginPlay()
 void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	ESkillTrail();
 
 }
 
@@ -64,6 +75,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("EKey", EInputEvent::IE_Pressed, this, &AMainCharacter::EKeyPressed);
+	PlayerInputComponent->BindAction("EKey", EInputEvent::IE_Released, this, &AMainCharacter::EKeyReleased);
 
 	PlayerInputComponent->BindAction("FireButton", IE_Pressed, this, &AMainCharacter::FireWeapon);
 }
@@ -124,6 +137,64 @@ void AMainCharacter::FireWeapon()
 	{
 		MainAnim->Montage_Play(AttackMontage);
 		MainAnim->Montage_JumpToSection(FName("FireBall"));
+	}
+}
+
+void AMainCharacter::EKeyPressed()
+{
+	IsEKeyPressed = true;
+}
+
+void AMainCharacter::EKeyReleased()
+{
+	IsEKeyPressed = false;
+	SkillRangeParticle->SetHiddenInGame(true);
+
+	// TODO ESkill 발사
+}
+
+void AMainCharacter::ESkillTrail()
+{
+	if (IsEKeyPressed)
+	{
+		FVector2D ViewportSize;
+		if (GEngine && GEngine->GameViewport)
+		{
+			GEngine->GameViewport->GetViewportSize(ViewportSize);
+		}
+
+		FVector2D CrosshairLocation(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
+		FVector CrosshairWorldPosition;
+		FVector CrosshairWorldDirection;
+
+		bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
+			UGameplayStatics::GetPlayerController(this, 0),
+			CrosshairLocation,
+			CrosshairWorldPosition,
+			CrosshairWorldDirection);
+
+		if (bScreenToWorld) 
+		{
+			FHitResult ScreenTraceHit;
+			const FVector Start = CrosshairWorldPosition;
+			const FVector End = CrosshairWorldPosition + CrosshairWorldDirection * ESkillRange;
+
+			FVector BeamEndPoint = End;
+
+			GetWorld()->LineTraceSingleByChannel(
+				ScreenTraceHit,
+				Start,
+				End,
+				ECollisionChannel::ECC_Visibility);
+			if (ScreenTraceHit.bBlockingHit) // was there a trace hit?
+			{
+				BeamEndPoint = ScreenTraceHit.Location;
+				//DrawDebugLine(GetWorld(), Start, BeamEndPoint, FColor::Red, false, 2.f);
+				//DrawDebugPoint(GetWorld(), ScreenTraceHit.Location, 5.f, FColor::Red, false, 2.f);
+				SkillRangeParticle->SetHiddenInGame(false);
+				SkillRangeParticle->SetRelativeLocation(ScreenTraceHit.Location + FVector(0.0f, 0.0f, 10.f));
+			}
+		}
 	}
 }
 

@@ -68,11 +68,17 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	class UParticleSystem* MuzzleFlash;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UParticleSystemComponent* SkillRangeParticle;
+
 	/** Montage for firing the weapon */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	class UAnimMontage* AttackMontage;
 
 	class UMainAnimInstance* MainAnim;
+
+	bool IsEKeyPressed = false;
+	float ESkillRange = 3000.f;
 
 public:
 	void MoveForward(float Value);
@@ -82,8 +88,11 @@ public:
 	void Turn(float Value);
 	void LookUp(float Value);
 
-	/** Called when the Fire Button is pressed */
 	void FireWeapon();
+
+	void EKeyPressed();
+	void EKeyReleased();
+	void ESkillTrail();
 
 	UFUNCTION()
 	void SendFireBall();
