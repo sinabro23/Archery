@@ -52,6 +52,12 @@ AMainCharacter::AMainCharacter()
 	{
 		MeteorParticle = PS_METEOR.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_METEORAREA(TEXT("ParticleSystem'/Game/ParagonGideon/FX/Particles/Gideon/Abilities/Meteor/FX/P_Gideon_Meteor_Portal_Fast.P_Gideon_Meteor_Portal_Fast'"));
+	if (PS_METEORAREA.Succeeded())
+	{
+		MeteorAreaParticle = PS_METEORAREA.Object;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -157,11 +163,17 @@ void AMainCharacter::FireWeapon()
 
 void AMainCharacter::EKeyPressed()
 {
+	if (bIsAttacking)
+		return;
+
 	IsEKeyPressed = true;
 }
 
 void AMainCharacter::EKeyReleased()
 {
+	if (bIsAttacking)
+		return;
+
 	IsEKeyPressed = false;
 	SkillRangeParticle->SetHiddenInGame(true);
 
@@ -273,7 +285,7 @@ void AMainCharacter::SendFireBall()
 				//DrawDebugPoint(GetWorld(), ScreenTraceHit.Location, 5.f, FColor::Red, false, 2.f);
 			}
 
-			AFireBall* Fireball = GetWorld()->SpawnActor<AFireBall>(SocketTransform.GetLocation(), FRotator::ZeroRotator);
+			AFireBall* Fireball = GetWorld()->SpawnActor<AFireBall>(SocketTransform.GetLocation(), GetActorRotation());
 			Fireball->StartFireBall(CrosshairWorldDirection);
 		}
 	}
@@ -289,6 +301,7 @@ void AMainCharacter::SendMeteor()
 		if (MeteorParticle)
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MeteorParticle, MeteorPosition);
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MeteorAreaParticle, MeteorPosition);
 		}
 	}
 }
