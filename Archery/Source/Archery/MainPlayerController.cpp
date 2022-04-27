@@ -2,4 +2,25 @@
 
 
 #include "MainPlayerController.h"
+#include "Blueprint/UserWidget.h"
 
+AMainPlayerController::AMainPlayerController()
+{
+
+}
+
+void AMainPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (HUDOverlayAsset)
+	{
+		HUDOverlay = CreateWidget<UUserWidget>(this, HUDOverlayAsset);
+	}
+
+	if (HUDOverlay)
+	{
+		HUDOverlay->AddToViewport();
+		HUDOverlay->SetVisibility(ESlateVisibility::Visible);
+	}
+}
