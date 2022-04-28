@@ -188,6 +188,8 @@ void AMainCharacter::EKeyReleased()
 	SkillRangeParticle->SetHiddenInGame(true);
 
 	// TODO ESkill น฿ป็
+
+	CurrentSkillMaxCastingTime = ESkillCastingTime;
 	if (MainAnim && AttackMontage)
 	{
 		MainAnim->Montage_Play(AttackMontage);
