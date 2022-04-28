@@ -11,6 +11,7 @@ enum class ECharacterState : uint8
 {
 	ECS_Normal, 
 	ECS_Cast,
+	
 
 	ECS_MAX 
 };
@@ -108,6 +109,20 @@ private:
 
 	class AMainPlayerController* MainPlayerController = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Casting", meta = (AllowPrivateAccess = "true"))
+	float ESkillCastingTime = 3.f;
+
+	float CurrentCastingTime = 0.f;
+	float CurrentSkillMaxCastingTime = 0.f;
+	
+	FTimerHandle ESkillTimer;
+
+	// 움직임 속도
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	float BaseMovementSpeed = 650.f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	float CastingMovementSpeed = 400.f;
+
 public:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -132,4 +147,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsCasting();
+
+	void SetCharacterMovementSpeed();
+
+	float GetESkillRatio();
 };

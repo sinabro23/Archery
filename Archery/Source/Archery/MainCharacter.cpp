@@ -73,6 +73,7 @@ void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	ESkillTrail();
+	SetCharacterMovementSpeed();
 
 }
 
@@ -102,7 +103,7 @@ void AMainCharacter::PostInitializeComponents()
 	{
 		MainAnim->OnSendFireBall.AddUObject(this, &AMainCharacter::SendFireBall);
 		MainAnim->OnFireBallEnd.AddUObject(this, &AMainCharacter::AttackEnd);
-		MainAnim->OnCastingEnd.AddUObject(this, &AMainCharacter::SendMeteor);
+		//MainAnim->OnCastingEnd.AddUObject(this, &AMainCharacter::SendMeteor);
 	}
 }
 
@@ -164,7 +165,7 @@ void AMainCharacter::FireWeapon()
 
 void AMainCharacter::EKeyPressed()
 {
-	if (bIsAttacking)
+	if (bIsAttacking || CharacterState == ECharacterState::ECS_Cast)
 		return;
 
 	IsEKeyPressed = true;
@@ -172,7 +173,7 @@ void AMainCharacter::EKeyPressed()
 
 void AMainCharacter::EKeyReleased()
 {
-	if (bIsAttacking)
+	if (bIsAttacking || !IsEKeyPressed)
 		return;
 
 	IsEKeyPressed = false;
@@ -192,12 +193,20 @@ void AMainCharacter::EKeyReleased()
 	{
 		MainPlayerController->SetWidgetVisiblity(true);
 	}
+
+	GetWorldTimerManager().SetTimer(
+		ESkillTimer,
+		this,
+		&AMainCharacter::SendMeteor,
+		ESkillCastingTime);
 }
 
 void AMainCharacter::ESkillTrail()
 {
+
 	if (IsEKeyPressed)
 	{
+
 		FVector2D ViewportSize;
 		if (GEngine && GEngine->GameViewport)
 		{
@@ -237,6 +246,8 @@ void AMainCharacter::ESkillTrail()
 				SkillRangeParticle->SetRelativeLocation(ScreenTraceHit.Location + FVector(0.0f, 0.0f, 10.f));
 			}
 		}
+
+		
 	}
 }
 
@@ -330,6 +341,28 @@ void AMainCharacter::AttackEnd()
 bool AMainCharacter::IsCasting()
 {
 	return CharacterState == ECharacterState::ECS_Cast;
+}
+
+void AMainCharacter::SetCharacterMovementSpeed()
+{
+	switch (CharacterState)
+	{
+	case ECharacterState::ECS_Normal:
+		GetCharacterMovement()->MaxWalkSpeed = BaseMovementSpeed;
+		break;
+	case ECharacterState::ECS_Cast:
+		GetCharacterMovement()->MaxWalkSpeed = CastingMovementSpeed;
+		break;
+	case ECharacterState::ECS_MAX:
+		break;
+	default:
+		break;
+	}
+}
+
+float AMainCharacter::GetESkillRatio()
+{
+	return 0.0f;
 }
 
 
