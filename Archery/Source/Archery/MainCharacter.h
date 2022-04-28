@@ -103,6 +103,9 @@ private:
 
 	bool bIsAttacking = false;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Casting", meta = (AllowPrivateAccess = "true"))
+	bool bIsCasting = false;
+
 public:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -124,4 +127,7 @@ public:
 	void SendMeteor();
 
 	void AttackEnd();
+
+	UFUNCTION(BlueprintCallable)
+	bool IsCasting();
 };

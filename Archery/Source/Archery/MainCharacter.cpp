@@ -183,6 +183,9 @@ void AMainCharacter::EKeyReleased()
 		MainAnim->Montage_Play(AttackMontage);
 		MainAnim->Montage_JumpToSection(FName("Cast"));
 	}
+
+	bIsCasting = true;
+	CharacterState = ECharacterState::ECS_Cast;
 }
 
 void AMainCharacter::ESkillTrail()
@@ -304,11 +307,19 @@ void AMainCharacter::SendMeteor()
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MeteorAreaParticle, MeteorPosition);
 		}
 	}
+
+	bIsCasting = false;
+	CharacterState = ECharacterState::ECS_Normal;
 }
 
 void AMainCharacter::AttackEnd()
 {
 	bIsAttacking = false;
+}
+
+bool AMainCharacter::IsCasting()
+{
+	return CharacterState == ECharacterState::ECS_Cast;
 }
 
 
