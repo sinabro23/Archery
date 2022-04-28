@@ -75,6 +75,14 @@ void AMainCharacter::Tick(float DeltaTime)
 	ESkillTrail();
 	SetCharacterMovementSpeed();
 
+	// ÇÔ¼ö·Î»©±â
+	if (CharacterState == ECharacterState::ECS_Cast)
+	{
+		CurrentCastingTime = GetWorldTimerManager().GetTimerElapsed(ESkillTimer);
+	}
+
+	
+	
 }
 
 // Called to bind functionality to input
@@ -313,6 +321,7 @@ void AMainCharacter::SendFireBall()
 
 void AMainCharacter::SendMeteor()
 {
+
 	if (MainAnim && AttackMontage)
 	{
 		MainAnim->Montage_Play(AttackMontage);

@@ -112,6 +112,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Casting", meta = (AllowPrivateAccess = "true"))
 	float ESkillCastingTime = 3.f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Casting", meta = (AllowPrivateAccess = "true"))
 	float CurrentCastingTime = 0.f;
 	float CurrentSkillMaxCastingTime = 0.f;
 	
