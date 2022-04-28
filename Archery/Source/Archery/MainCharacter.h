@@ -106,6 +106,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Casting", meta = (AllowPrivateAccess = "true"))
 	bool bIsCasting = false;
 
+	class AMainPlayerController* MainPlayerController = nullptr;
+
 public:
 	void MoveForward(float Value);
 	void MoveRight(float Value);

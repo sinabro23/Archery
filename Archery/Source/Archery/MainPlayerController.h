@@ -28,6 +28,8 @@ public:
 	UPROPERTY()
 	class UUserWidget* HUDOverlay; //화면에 띄워질 HUD전체
 
-private:
+public:
+	
+	void SetWidgetVisiblity(bool Visible);
 
 };

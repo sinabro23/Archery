@@ -12,6 +12,7 @@
 #include "FireBall.h"
 #include "DrawDebugHelpers.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "MainPlayerController.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -64,7 +65,7 @@ AMainCharacter::AMainCharacter()
 void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	MainPlayerController = Cast<AMainPlayerController>(GetController());
 }
 
 // Called every frame
@@ -185,7 +186,12 @@ void AMainCharacter::EKeyReleased()
 	}
 
 	bIsCasting = true;
+	
 	CharacterState = ECharacterState::ECS_Cast;
+	if (MainPlayerController)
+	{
+		MainPlayerController->SetWidgetVisiblity(true);
+	}
 }
 
 void AMainCharacter::ESkillTrail()
@@ -310,6 +316,10 @@ void AMainCharacter::SendMeteor()
 
 	bIsCasting = false;
 	CharacterState = ECharacterState::ECS_Normal;
+	if (MainPlayerController)
+	{
+		MainPlayerController->SetWidgetVisiblity(false);
+	}
 }
 
 void AMainCharacter::AttackEnd()
