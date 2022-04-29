@@ -68,3 +68,8 @@ void UMainAnimInstance::AnimNotify_BurdenEnd()
 {
 	OnBurdenEnd.Broadcast();
 }
+
+void UMainAnimInstance::AnimNotify_BurdenFire()
+{
+	OnBurdenFire.Broadcast();
+}

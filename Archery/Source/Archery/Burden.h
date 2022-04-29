@@ -4,51 +4,51 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "FireBall.generated.h"
+#include "Burden.generated.h"
 
 UCLASS()
-class ARCHERY_API AFireBall : public AActor
+class ARCHERY_API ABurden : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AFireBall();
+	ABurden();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 private:
 	bool IsFired = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireBall", meta = (AllowPrivateAccess = "true"))
-	class USphereComponent* SphereCollsion = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Burden", meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* BoxCollsion = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireBall", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Burden", meta = (AllowPrivateAccess = "true"))
 	UParticleSystemComponent* FireballParticle = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireBall", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Burden", meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* NoImpactParticle = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireBall", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Burden", meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* ImpactParticle = nullptr;
 
 	FVector FireballDirection = FVector();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireBall", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Burden", meta = (AllowPrivateAccess = "true"))
 	float Speed = 1000.f;
 
 	float RemainTime = 0.f;
 
 public:
-	void StartFireBall(const FVector& Direction);
-	void SendFireball(float DeltaTime);
+	void StartBurden(const FVector& Direction);
+	void SendBurden(float DeltaTime);
 
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

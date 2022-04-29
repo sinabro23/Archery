@@ -154,6 +154,9 @@ public:
 	UFUNCTION()
 	void SendMeteor();
 
+	UFUNCTION()
+	void SendBurden();
+
 	void AttackEnd();
 	void BurdenEnd();
 

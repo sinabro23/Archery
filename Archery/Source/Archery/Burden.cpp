@@ -1,23 +1,21 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "FireBall.h"
-#include "Components/SphereComponent.h"
+#include "Burden.h"
 #include "Components/BoxComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "MainCharacter.h"
+
 // Sets default values
-AFireBall::AFireBall()
+ABurden::ABurden()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SphereCollsion = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
-	SphereCollsion->InitSphereRadius(15.f);
-	SphereCollsion->SetHiddenInGame(false);
-	SphereCollsion->SetCollisionProfileName(FName("OverlapAll"));
-	SetRootComponent(SphereCollsion);
+	BoxCollsion = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
+	BoxCollsion->SetBoxExtent(FVector(16.f, 16.f, 16.f));
+	BoxCollsion->SetHiddenInGame(false);
+	SetRootComponent(BoxCollsion);
 
 	FireballParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("FireballParticle"));
 	FireballParticle->SetupAttachment(GetRootComponent());
@@ -40,70 +38,36 @@ AFireBall::AFireBall()
 	{
 		ImpactParticle = PS_FIREBALLHIT.Object;
 	}
-
 }
 
 // Called when the game starts or when spawned
-void AFireBall::BeginPlay()
+void ABurden::BeginPlay()
 {
 	Super::BeginPlay();
+	
 }
 
-void AFireBall::PostInitializeComponents()
+void ABurden::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	SphereCollsion->OnComponentBeginOverlap.AddDynamic(this, &AFireBall::OnBeginOverlap);
 }
 
 // Called every frame
-void AFireBall::Tick(float DeltaTime)
+void ABurden::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	RemainTime += DeltaTime;
-
-	if (IsFired)
-	{
-		SendFireball(DeltaTime);
-	}
-
-
-	if (RemainTime > 3.f)
-	{
-		if (NoImpactParticle)
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), NoImpactParticle, GetActorTransform());
-		}
-		Destroy();
-	}
 }
 
-void AFireBall::StartFireBall(const FVector& Direction)
+void ABurden::StartBurden(const FVector& Direction)
 {
-	IsFired = true;
-	FireballDirection = Direction;
 }
 
-void AFireBall::SendFireball(float DeltaTime)
+void ABurden::SendBurden(float DeltaTime)
 {
-	FVector CurrentLocation = GetActorLocation() += FireballDirection * Speed * DeltaTime;
-
-	SetActorLocation(CurrentLocation);
 }
 
-void AFireBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABurden::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Overlapped"));
-
-	auto Character = Cast<AMainCharacter>(OtherActor);
-	if (Character)
-	{
-		if (ImpactParticle)
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticle, GetActorLocation());
-		}
-	}
-	
-	Destroy();
 }
 

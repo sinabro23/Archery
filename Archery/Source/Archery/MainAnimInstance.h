@@ -10,6 +10,7 @@ DECLARE_MULTICAST_DELEGATE(FOnSendFireBallDelegate)
 DECLARE_MULTICAST_DELEGATE(FOnSendFireBallEndDelegate)
 DECLARE_MULTICAST_DELEGATE(FOnCastingEndDelegate)
 DECLARE_MULTICAST_DELEGATE(FOnBurdenEndDelegate)
+DECLARE_MULTICAST_DELEGATE(FOnBurdenFireDelegate)
 /**
  * 
  */
@@ -58,9 +59,13 @@ public:
 	UFUNCTION()
 	void AnimNotify_BurdenEnd();
 
+	UFUNCTION()
+	void AnimNotify_BurdenFire();
+
 public:
 	FOnSendFireBallDelegate OnSendFireBall;
 	FOnSendFireBallEndDelegate OnFireBallEnd;
 	FOnCastingEndDelegate OnCastingEnd;
 	FOnBurdenEndDelegate OnBurdenEnd;
+	FOnBurdenFireDelegate OnBurdenFire;
 };
