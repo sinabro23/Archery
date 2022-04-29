@@ -80,8 +80,6 @@ void AMainCharacter::Tick(float DeltaTime)
 	{
 		CurrentCastingTime = GetWorldTimerManager().GetTimerElapsed(ESkillTimer);
 	}
-
-	
 	
 }
 
@@ -99,6 +97,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("EKey", EInputEvent::IE_Pressed, this, &AMainCharacter::EKeyPressed);
 	PlayerInputComponent->BindAction("EKey", EInputEvent::IE_Released, this, &AMainCharacter::EKeyReleased);
+	PlayerInputComponent->BindAction("RMBButton", EInputEvent::IE_Pressed, this, &AMainCharacter::RMBButtonPressed);
+	PlayerInputComponent->BindAction("RMBButton", EInputEvent::IE_Released, this, &AMainCharacter::RMBButtonReleased);
 
 	PlayerInputComponent->BindAction("FireButton", IE_Pressed, this, &AMainCharacter::FireWeapon);
 }
@@ -111,12 +111,14 @@ void AMainCharacter::PostInitializeComponents()
 	{
 		MainAnim->OnSendFireBall.AddUObject(this, &AMainCharacter::SendFireBall);
 		MainAnim->OnFireBallEnd.AddUObject(this, &AMainCharacter::AttackEnd);
-		//MainAnim->OnCastingEnd.AddUObject(this, &AMainCharacter::SendMeteor);
+		MainAnim->OnBurdenEnd.AddUObject(this, &AMainCharacter::BurdenEnd);
 	}
 }
 
 void AMainCharacter::MoveForward(float Value)
 {
+	if (bIsBurden)
+		return;
 
 	if (Controller && Value != 0.f)
 	{
@@ -131,6 +133,8 @@ void AMainCharacter::MoveForward(float Value)
 
 void AMainCharacter::MoveRight(float Value)
 {
+	if (bIsBurden)
+		return;
 
 	if (Controller && Value != 0.f)
 	{
@@ -186,7 +190,7 @@ void AMainCharacter::EKeyReleased()
 
 	IsEKeyPressed = false;
 	SkillRangeParticle->SetHiddenInGame(true);
-
+	CurrentSkillName = FName("Meteor");
 	// TODO ESkill น฿ป็
 
 	CurrentSkillMaxCastingTime = ESkillCastingTime;
@@ -259,6 +263,21 @@ void AMainCharacter::ESkillTrail()
 
 		
 	}
+}
+
+void AMainCharacter::RMBButtonPressed()
+{
+	if (MainAnim && BurdenMontage)
+	{
+		MainAnim->Montage_Play(BurdenMontage);
+		MainAnim->Montage_JumpToSection(FName("Burden"));
+	}
+
+	bIsBurden = true;
+}
+
+void AMainCharacter::RMBButtonReleased()
+{
 }
 
 void AMainCharacter::SendFireBall()
@@ -347,6 +366,11 @@ void AMainCharacter::SendMeteor()
 void AMainCharacter::AttackEnd()
 {
 	bIsAttacking = false;
+}
+
+void AMainCharacter::BurdenEnd()
+{
+	bIsBurden = false;	
 }
 
 bool AMainCharacter::IsCasting()

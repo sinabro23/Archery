@@ -90,9 +90,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UParticleSystemComponent* SkillRangeParticle;
 
-	/** Montage for firing the weapon */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	class UAnimMontage* AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	class UAnimMontage* BurdenMontage;
 
 	class UMainAnimInstance* MainAnim;
 
@@ -103,6 +105,7 @@ private:
 	float ESkillRange = 3000.f;
 
 	bool bIsAttacking = false;
+	bool bIsBurden = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Casting", meta = (AllowPrivateAccess = "true"))
 	bool bIsCasting = false;
@@ -118,6 +121,9 @@ private:
 	float CurrentSkillMaxCastingTime = 0.f;
 	
 	FTimerHandle ESkillTimer;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Casting", meta = (AllowPrivateAccess = "true"))
+	FName CurrentSkillName = FName("None");
 
 	// 움직임 속도
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
@@ -139,6 +145,9 @@ public:
 	void EKeyReleased();
 	void ESkillTrail();
 
+	void RMBButtonPressed();
+	void RMBButtonReleased();
+
 	UFUNCTION()
 	void SendFireBall();
 
@@ -146,6 +155,7 @@ public:
 	void SendMeteor();
 
 	void AttackEnd();
+	void BurdenEnd();
 
 	UFUNCTION(BlueprintCallable)
 	bool IsCasting();

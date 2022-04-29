@@ -63,3 +63,8 @@ void UMainAnimInstance::AnimNotify_CastingEnd()
 {
 	OnCastingEnd.Broadcast();
 }
+
+void UMainAnimInstance::AnimNotify_BurdenEnd()
+{
+	OnBurdenEnd.Broadcast();
+}
