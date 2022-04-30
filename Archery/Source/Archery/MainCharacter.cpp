@@ -101,6 +101,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("RMBButton", EInputEvent::IE_Released, this, &AMainCharacter::RMBButtonReleased);
 
 	PlayerInputComponent->BindAction("FireButton", IE_Pressed, this, &AMainCharacter::FireWeapon);
+
+	PlayerInputComponent->BindAction("NextSkill", IE_Pressed, this, &AMainCharacter::SkillChange);
 }
 
 void AMainCharacter::PostInitializeComponents()
@@ -268,20 +270,44 @@ void AMainCharacter::ESkillTrail()
 
 void AMainCharacter::RMBButtonPressed()
 {
-	if (bIsBurden)
-		return;
-
-	if (MainAnim && BurdenMontage)
+	switch (CurrentSkill)
 	{
-		MainAnim->Montage_Play(BurdenMontage);
-		MainAnim->Montage_JumpToSection(FName("Burden"));
-	}
+	case ECharacterSkill::ECS_Meteor:
+		EKeyPressed();
+		break;
+	case ECharacterSkill::ECS_Burden:
 
-	bIsBurden = true;
+		if (bIsBurden)
+			return;
+
+		bIsBurden = true;
+		if (MainAnim && BurdenMontage)
+		{
+			MainAnim->Montage_Play(BurdenMontage);
+			MainAnim->Montage_JumpToSection(FName("Burden"));
+		}
+		break;
+	case ECharacterSkill::ECS_MAX:
+		break;
+	default:
+		break;
+	}
 }
 
 void AMainCharacter::RMBButtonReleased()
 {
+	switch (CurrentSkill)
+	{
+	case ECharacterSkill::ECS_Meteor:
+		EKeyReleased();
+		break;
+	case ECharacterSkill::ECS_Burden:
+		break;
+	case ECharacterSkill::ECS_MAX:
+		break;
+	default:
+		break;
+	}
 }
 
 void AMainCharacter::SendFireBall()
@@ -405,7 +431,7 @@ void AMainCharacter::SendBurden()
 			const FVector End = CrosshairWorldPosition + CrosshairWorldDirection * 50'000.f;
 
 			// Set beam end point to line trace end point
-			FVector BeamEndPoint = End + FVector(0.0f ,0.0f, 100.f);
+			FVector BeamEndPoint = End;
 
 			// Trace outward from crosshairs world location
 			GetWorld()->LineTraceSingleByChannel(
@@ -462,6 +488,23 @@ void AMainCharacter::SetCharacterMovementSpeed()
 float AMainCharacter::GetESkillRatio()
 {
 	return 0.0f;
+}
+
+void AMainCharacter::SkillChange()
+{
+	switch (CurrentSkill)
+	{
+	case ECharacterSkill::ECS_Meteor:
+		CurrentSkill = ECharacterSkill::ECS_Burden;
+		break;
+	case ECharacterSkill::ECS_Burden:
+		CurrentSkill = ECharacterSkill::ECS_Meteor;
+		break;
+	case ECharacterSkill::ECS_MAX:
+		break;
+	default:
+		break;
+	}
 }
 
 

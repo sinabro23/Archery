@@ -13,6 +13,17 @@ void AMainPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (SkillHUDOverlayAsset)
+	{
+		SkillHUDOverlay = CreateWidget<UUserWidget>(this, SkillHUDOverlayAsset);
+	}
+
+	if (SkillHUDOverlay)
+	{
+		SkillHUDOverlay->AddToViewport();
+		SkillHUDOverlay->SetVisibility(ESlateVisibility::Hidden);
+	}
+
 	if (HUDOverlayAsset)
 	{
 		HUDOverlay = CreateWidget<UUserWidget>(this, HUDOverlayAsset);
@@ -21,7 +32,7 @@ void AMainPlayerController::BeginPlay()
 	if (HUDOverlay)
 	{
 		HUDOverlay->AddToViewport();
-		HUDOverlay->SetVisibility(ESlateVisibility::Hidden);
+		HUDOverlay->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 
@@ -29,11 +40,13 @@ void AMainPlayerController::SetWidgetVisiblity(bool Visible)
 {
 	if (Visible == true)
 	{
-		HUDOverlay->SetVisibility(ESlateVisibility::Visible);
+		SkillHUDOverlay->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
 	{
-		HUDOverlay->SetVisibility(ESlateVisibility::Hidden);
+		SkillHUDOverlay->SetVisibility(ESlateVisibility::Hidden);
 	}
 
+
+	
 }

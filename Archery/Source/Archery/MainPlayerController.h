@@ -23,6 +23,12 @@ protected:
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
+	TSubclassOf<class UUserWidget> SkillHUDOverlayAsset;
+
+	UPROPERTY()
+	class UUserWidget* SkillHUDOverlay; //화면에 띄워질 HUD전체
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 	TSubclassOf<class UUserWidget> HUDOverlayAsset;
 
 	UPROPERTY()

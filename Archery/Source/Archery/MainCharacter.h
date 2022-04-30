@@ -11,9 +11,17 @@ enum class ECharacterState : uint8
 {
 	ECS_Normal, 
 	ECS_Cast,
-	
 
 	ECS_MAX 
+};
+
+UENUM(BlueprintType)
+enum class ECharacterSkill : uint8
+{
+	ECS_Meteor = 0,
+	ECS_Burden,
+
+	ECS_MAX
 };
 
 UCLASS()
@@ -131,6 +139,16 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	float CastingMovementSpeed = 400.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	ECharacterSkill CurrentSkill = ECharacterSkill::ECS_Meteor;
+
+
+	///
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UTexture2D* MeteorTexture;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UTexture2D* BurdenTexture;
+	///
 public:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -166,4 +184,6 @@ public:
 	void SetCharacterMovementSpeed();
 
 	float GetESkillRatio();
+
+	void SkillChange();
 };
