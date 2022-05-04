@@ -7,6 +7,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "MainCharacter.h"
+#include "Enemy.h"
 // Sets default values
 AFireBall::AFireBall()
 {
@@ -93,14 +94,13 @@ void AFireBall::SendFireball(float DeltaTime)
 
 void AFireBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Overlapped"));
-
-	auto Character = Cast<AMainCharacter>(OtherActor);
-	if (Character)
+	auto Enemy = Cast<AEnemy>(OtherActor);
+	if (Enemy)
 	{
 		if (ImpactParticle)
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticle, GetActorLocation());
+			Enemy->OnAttacked(FireballDamage);
 		}
 	}
 	

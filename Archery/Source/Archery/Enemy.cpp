@@ -2,6 +2,8 @@
 
 
 #include "Enemy.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -30,5 +32,36 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AEnemy::OnAttacked(float DamageAmount)
+{
+	float NewHP = CurrentHP - DamageAmount;
+	SetHP(NewHP);
+}
+
+float AEnemy::GetMaxHP()
+{
+	return MaxHP;
+}
+
+float AEnemy::GetCurrentHP()
+{
+	return CurrentHP;
+}
+
+float AEnemy::GetHPRatio()
+{
+	return CurrentHP / MaxHP;
+}
+
+void AEnemy::SetHP(float NewHP)
+{
+	CurrentHP = NewHP;
+
+	if (CurrentHP < 0.f)
+		CurrentHP = 0.f;
+
+	OnHPChanged.Broadcast();
 }
 

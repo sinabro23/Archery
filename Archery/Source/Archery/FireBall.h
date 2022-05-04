@@ -46,6 +46,9 @@ private:
 
 	float RemainTime = 0.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireBall", meta = (AllowPrivateAccess = "true"))
+	float FireballDamage = 15.f;
+
 public:
 	void StartFireBall(const FVector& Direction);
 	void SendFireball(float DeltaTime);
