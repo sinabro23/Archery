@@ -13,6 +13,7 @@
 #include "DrawDebugHelpers.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "MainPlayerController.h"
+#include "Enemy.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -391,6 +392,10 @@ void AMainCharacter::SendMeteor()
 	{
 		MainPlayerController->SetWidgetVisiblity(false);
 	}
+
+	/////
+	MeteorAttackCheck();
+
 }
 
 void AMainCharacter::SendBurden()
@@ -505,6 +510,42 @@ void AMainCharacter::SkillChange()
 	default:
 		break;
 	}
+}
+
+void AMainCharacter::MeteorAttackCheck()
+{
+	FVector Center = MeteorPosition - FVector(0.0f, 0.0f, 1000.f);
+	TArray<FOverlapResult> HitResults;
+	FCollisionQueryParams CollsionQueryParam(NAME_None, false, this);
+
+	bool bResult = GetWorld()->OverlapMultiByChannel(
+		HitResults,
+		Center,
+		FQuat::Identity,
+		ECollisionChannel::ECC_Pawn,
+		FCollisionShape::MakeSphere(400.f),
+		CollsionQueryParam
+	);
+
+	if (bResult)
+	{
+		for (auto HitResult : HitResults)
+		{
+			if (HitResult.Actor.IsValid())
+			{
+				AEnemy* HitEnemy = Cast<AEnemy>(HitResult.Actor);
+				
+				if (HitEnemy)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("HIT ACTOR :%s"), *HitResult.Actor->GetName());
+					HitEnemy->OnAttacked(MeteorDamage);
+				}
+			}
+		}
+	}
+
+	DrawDebugSphere(GetWorld(), Center, 400.f, 16, FColor::Green, false, 1.f);
+
 }
 
 

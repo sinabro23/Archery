@@ -160,6 +160,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	float MaxMP = 100.f;
 
+	float MeteorDamage = 10.f;
+
 public:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -197,4 +199,6 @@ public:
 	float GetESkillRatio();
 
 	void SkillChange();
+
+	void MeteorAttackCheck();
 };

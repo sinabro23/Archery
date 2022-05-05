@@ -38,6 +38,7 @@ void AEnemy::OnAttacked(float DamageAmount)
 {
 	float NewHP = CurrentHP - DamageAmount;
 	SetHP(NewHP);
+	PlayHitMontage(FName("HitReactFront"));
 }
 
 float AEnemy::GetMaxHP()
@@ -88,5 +89,28 @@ void AEnemy::ShowHealthBar_Implementation()
 void AEnemy::Die()
 {
 	HideHealthBar();
+}
+
+void AEnemy::PlayHitMontage(FName Section, float PlayRate)
+{
+	if (bCanHitReact)
+	{
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		if (AnimInstance)
+		{
+			AnimInstance->Montage_Play(HitMontage, PlayRate);
+			AnimInstance->Montage_JumpToSection(Section, HitMontage);
+		}
+
+		bCanHitReact = false;
+		const float HitReactTime = FMath::FRandRange(HitReactTimeMin, HitReactTimeMax);
+		GetWorldTimerManager().SetTimer(HitReactTimer, this, &AEnemy::ResetHitReactTimer, HitReactTime);
+
+	}
+}
+
+void AEnemy::ResetHitReactTimer()
+{
+	bCanHitReact = true;
 }
 
