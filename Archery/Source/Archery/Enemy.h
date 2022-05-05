@@ -34,7 +34,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	float MaxHP = 100.f;
 
+	/** Time to display health bar once shot */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	float HealthBarDisplayTime = 4.f;
 
+	FTimerHandle HealthBarTimer;
 
 public:
 	void OnAttacked(float DamageAmount);
@@ -45,6 +49,14 @@ public:
 
 	void SetHP(float NewHP);
 
+	UFUNCTION(BlueprintNativeEvent)
+	void ShowHealthBar();
+	void ShowHealthBar_Implementation();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void HideHealthBar();
+
+	void Die();
 public:
 	FOnHPChanged OnHPChanged;
 	

@@ -60,8 +60,33 @@ void AEnemy::SetHP(float NewHP)
 	CurrentHP = NewHP;
 
 	if (CurrentHP < 0.f)
+	{
 		CurrentHP = 0.f;
+		Die();
+	}
+	else
+	{
+		ShowHealthBar();
+	}
+		
 
 	OnHPChanged.Broadcast();
+}
+
+
+
+void AEnemy::ShowHealthBar_Implementation()
+{
+	GetWorldTimerManager().ClearTimer(HealthBarTimer);
+	GetWorldTimerManager().SetTimer(
+		HealthBarTimer,
+		this,
+		&AEnemy::HideHealthBar,
+		HealthBarDisplayTime);
+}
+
+void AEnemy::Die()
+{
+	HideHealthBar();
 }
 
