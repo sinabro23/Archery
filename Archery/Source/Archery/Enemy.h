@@ -54,6 +54,9 @@ private:
 
 	bool bCanHitReact = true;
 
+	UPROPERTY(EditAnywhere, Category = "Behavior Tree", meta = (AllowPrivateAccess = "true"))
+	class UBehaviorTree* BehaviorTree;
+
 public:
 	void OnAttacked(float DamageAmount);
 
@@ -77,6 +80,7 @@ public:
 	void ResetHitReactTimer();
 
 public:
+	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
 
 public:
 	FOnHPChanged OnHPChanged;
