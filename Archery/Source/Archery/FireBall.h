@@ -25,7 +25,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	UPROPERTY()
 	bool IsFired = false;
+
+	UPROPERTY()
+	bool IsHit = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireBall", meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* SphereCollsion = nullptr;
@@ -48,6 +52,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireBall", meta = (AllowPrivateAccess = "true"))
 	float FireballDamage = 15.f;
+
 
 public:
 	void StartFireBall(const FVector& Direction);

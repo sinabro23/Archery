@@ -17,7 +17,6 @@ AFireBall::AFireBall()
 	SphereCollsion = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
 	SphereCollsion->InitSphereRadius(15.f);
 	SphereCollsion->SetHiddenInGame(false);
-	SphereCollsion->SetCollisionProfileName(FName("OverlapAll"));
 	SetRootComponent(SphereCollsion);
 
 	FireballParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("FireballParticle"));
@@ -63,7 +62,7 @@ void AFireBall::Tick(float DeltaTime)
 
 	RemainTime += DeltaTime;
 
-	if (IsFired)
+	//if (IsFired)
 	{
 		SendFireball(DeltaTime);
 	}
@@ -77,11 +76,13 @@ void AFireBall::Tick(float DeltaTime)
 		}
 		Destroy();
 	}
+
+	if (IsHit)
+		Destroy();
 }
 
 void AFireBall::StartFireBall(const FVector& Direction)
 {
-	IsFired = true;
 	FireballDirection = Direction;
 }
 
@@ -102,8 +103,10 @@ void AFireBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticle, GetActorLocation());
 			Enemy->OnAttacked(FireballDamage);
 		}
+
+		IsHit = true;
 	}
 	
-	Destroy();
+
 }
 

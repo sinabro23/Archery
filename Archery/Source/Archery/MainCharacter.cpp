@@ -364,7 +364,7 @@ void AMainCharacter::SendFireBall()
 				//DrawDebugLine(GetWorld(), Start, BeamEndPoint, FColor::Red, false, 2.f);
 				//DrawDebugPoint(GetWorld(), ScreenTraceHit.Location, 5.f, FColor::Red, false, 2.f);
 			}
-
+			
 			AFireBall* Fireball = GetWorld()->SpawnActor<AFireBall>(SocketTransform.GetLocation(), GetActorRotation());
 			Fireball->StartFireBall(CrosshairWorldDirection);
 		}
