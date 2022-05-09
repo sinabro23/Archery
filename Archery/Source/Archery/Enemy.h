@@ -125,6 +125,11 @@ private:
 	UAnimMontage* DeathMontage;
 
 	bool bDying = false;
+
+	FTimerHandle DeathTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	float DeathTime = 3.f;
 public:
 	void OnAttacked(float DamageAmount, class AMainCharacter* MainCharacter);
 
@@ -188,6 +193,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishDeath();
+
+	void DestroyEnemy();
 
 public:
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }

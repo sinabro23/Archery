@@ -165,6 +165,9 @@ private:
 
 	float MeteorDamage = 10.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* DeathMontage;
+
 public:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -204,4 +207,9 @@ public:
 	void SkillChange();
 
 	void MeteorAttackCheck();
+
+	void Die();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishDeath();
 };

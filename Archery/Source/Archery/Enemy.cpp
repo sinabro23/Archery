@@ -186,7 +186,7 @@ void AEnemy::Die()
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && DeathMontage)
 	{
-		AnimInstance->Montage_Play(DeathMontage, 1.ff);
+		AnimInstance->Montage_Play(DeathMontage, 1.f);
 		AnimInstance->Montage_JumpToSection(FName("Death"), DeathMontage);
 	}
 
@@ -374,6 +374,13 @@ void AEnemy::ResetCanAttack()
 }
 
 void AEnemy::FinishDeath()
+{
+	GetMesh()->bPauseAnims = true;
+
+	GetWorldTimerManager().SetTimer(DeathTimer, this, &AEnemy::DestroyEnemy, DeathTime);
+}
+
+void AEnemy::DestroyEnemy()
 {
 	Destroy();
 }

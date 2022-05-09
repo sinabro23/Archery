@@ -14,6 +14,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "MainPlayerController.h"
 #include "Enemy.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -74,6 +75,7 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	if (CurrentHP - DamageAmount <= 0.f)
 	{
 		CurrentHP = 0.f;
+		Die();
 	}
 	else
 	{
@@ -560,6 +562,29 @@ void AMainCharacter::MeteorAttackCheck()
 
 	DrawDebugSphere(GetWorld(), Center, 400.f, 16, FColor::Green, false, 1.f);
 
+}
+
+void AMainCharacter::Die()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && DeathMontage)
+	{
+		AnimInstance->Montage_Play(DeathMontage);
+		AnimInstance->Montage_JumpToSection(FName("Death"), DeathMontage);
+	}
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void AMainCharacter::FinishDeath()
+{
+	GetMesh()->bPauseAnims = true;
+
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+	if (PC)
+	{
+		DisableInput(PC);
+	}
 }
 
 
