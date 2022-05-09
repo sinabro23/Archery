@@ -69,6 +69,20 @@ void AMainCharacter::BeginPlay()
 	MainPlayerController = Cast<AMainPlayerController>(GetController());
 }
 
+float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (CurrentHP - DamageAmount <= 0.f)
+	{
+		CurrentHP = 0.f;
+	}
+	else
+	{
+		CurrentHP -= DamageAmount;
+	}
+
+	return DamageAmount;
+}
+
 // Called every frame
 void AMainCharacter::Tick(float DeltaTime)
 {
@@ -366,7 +380,7 @@ void AMainCharacter::SendFireBall()
 			}
 			
 			AFireBall* Fireball = GetWorld()->SpawnActor<AFireBall>(SocketTransform.GetLocation(), GetActorRotation());
-			Fireball->StartFireBall(CrosshairWorldDirection);
+			Fireball->StartFireBall(CrosshairWorldDirection, this);
 		}
 	}
 }
@@ -453,7 +467,7 @@ void AMainCharacter::SendBurden()
 			}
 
 			AFireBall* Fireball = GetWorld()->SpawnActor<AFireBall>(SocketTransform.GetLocation(), GetActorRotation());
-			Fireball->StartFireBall(CrosshairWorldDirection);
+			Fireball->StartFireBall(CrosshairWorldDirection, this);
 		}
 	}
 }
@@ -538,7 +552,7 @@ void AMainCharacter::MeteorAttackCheck()
 				if (HitEnemy)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("HIT ACTOR :%s"), *HitResult.Actor->GetName());
-					HitEnemy->OnAttacked(MeteorDamage);
+					HitEnemy->OnAttacked(MeteorDamage, this);
 				}
 			}
 		}

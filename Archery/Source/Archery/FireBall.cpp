@@ -81,9 +81,10 @@ void AFireBall::Tick(float DeltaTime)
 		Destroy();
 }
 
-void AFireBall::StartFireBall(const FVector& Direction)
+void AFireBall::StartFireBall(const FVector& Direction, AMainCharacter* CauserCharacter)
 {
 	FireballDirection = Direction;
+	MainCharacter = CauserCharacter;
 }
 
 void AFireBall::SendFireball(float DeltaTime)
@@ -101,7 +102,11 @@ void AFireBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 		if (ImpactParticle)
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticle, GetActorLocation());
-			Enemy->OnAttacked(FireballDamage);
+			if (MainCharacter)
+			{
+				Enemy->OnAttacked(FireballDamage, MainCharacter);
+			}
+			
 		}
 
 		IsHit = true;

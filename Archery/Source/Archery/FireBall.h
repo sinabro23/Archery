@@ -53,9 +53,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireBall", meta = (AllowPrivateAccess = "true"))
 	float FireballDamage = 15.f;
 
-
+	class AMainCharacter* MainCharacter = nullptr;
 public:
-	void StartFireBall(const FVector& Direction);
+	void StartFireBall(const FVector& Direction, class AMainCharacter* CauserCharacter);
 	void SendFireball(float DeltaTime);
 
 	UFUNCTION()
