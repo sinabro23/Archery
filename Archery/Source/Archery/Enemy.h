@@ -130,6 +130,10 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	float DeathTime = 3.f;
+
+	UPROPERTY(VisibleAnywhere, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UParticleSystemComponent* StunParticle = nullptr;
+
 public:
 	void OnAttacked(float DamageAmount, class AMainCharacter* MainCharacter);
 

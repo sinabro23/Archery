@@ -34,6 +34,17 @@ AEnemy::AEnemy()
 	LeftWeaponCollision->SetupAttachment(GetMesh(), FName("LeftWeaponBone"));
 	RightWeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("RightWeaponBox"));
 	RightWeaponCollision->SetupAttachment(GetMesh(), FName("RightWeaponBone"));
+
+	StunParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("StunParticleSystem"));
+	StunParticle->SetupAttachment(GetRootComponent());
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_STUN(TEXT("ParticleSystem'/Game/RPGEffects/Particles/P_Status_Stun.P_Status_Stun'"));
+	if (PS_STUN.Succeeded())
+	{
+		StunParticle->SetTemplate(PS_STUN.Object);
+	}
+
+	
 }
 
 // Called when the game starts or when spawned
@@ -50,8 +61,8 @@ void AEnemy::BeginPlay()
 	// 패트롤포인트를 월드포지션으로 넣기
 	const FVector WorldPatrolPoint = UKismetMathLibrary::TransformLocation(GetActorTransform(), PatrolPoint);
 	const FVector WorldPatrolPoint2 = UKismetMathLibrary::TransformLocation(GetActorTransform(), PatrolPoint2);
-	DrawDebugSphere(GetWorld(), WorldPatrolPoint, 25.f, 12, FColor::Red, true);
-	DrawDebugSphere(GetWorld(), WorldPatrolPoint2, 25.f, 12, FColor::Red, true);
+	//DrawDebugSphere(GetWorld(), WorldPatrolPoint, 25.f, 12, FColor::Red, true);
+	//DrawDebugSphere(GetWorld(), WorldPatrolPoint2, 25.f, 12, FColor::Red, true);
 
 	EnemyController = Cast<AEnemyController>(GetController());
 
@@ -62,9 +73,10 @@ void AEnemy::BeginPlay()
 		EnemyController->GetBlackboardComponent()->SetValueAsBool(FName("CanAttack"), true);
 
 		EnemyController->RunBehaviorTree(BehaviorTree);
-
 		
 	}
+
+	StunParticle->SetActive(false);
 }
 
 // Called every frame
@@ -72,6 +84,14 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bStunned)
+	{
+		StunParticle->SetActive(true);
+	}
+	else
+	{
+		StunParticle->SetActive(false);
+	}
 }
 
 // Called to bind functionality to input

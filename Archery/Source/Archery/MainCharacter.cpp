@@ -61,6 +61,18 @@ AMainCharacter::AMainCharacter()
 	{
 		MeteorAreaParticle = PS_METEORAREA.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_BlackholeCast(TEXT("ParticleSystem'/Game/ParagonGideon/FX/Particles/Gideon/Abilities/Ultimate/FX/P_Gideon_Ultimate_Cast.P_Gideon_Ultimate_Cast'"));
+	if (PS_BlackholeCast.Succeeded())
+	{
+		BlackholeCastParticle = PS_BlackholeCast.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_BlackholeShot(TEXT("ParticleSystem'/Game/ParagonGideon/FX/Particles/Gideon/Abilities/Ultimate/FX/P_Gideon_Ultimate.P_Gideon_Ultimate'"));
+	if (PS_BlackholeShot.Succeeded())
+	{
+		BlackholeUltimateParticle = PS_BlackholeShot.Object;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -90,6 +102,7 @@ void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	ESkillTrail();
+	BlackholeTrail();
 	SetCharacterMovementSpeed();
 
 	// 함수로빼기
@@ -304,6 +317,9 @@ void AMainCharacter::RMBButtonPressed()
 			MainAnim->Montage_JumpToSection(FName("Burden"));
 		}
 		break;
+	case ECharacterSkill::ECS_BlackHole:
+		BlackHoleSkillPressed();
+		break;
 	case ECharacterSkill::ECS_MAX:
 		break;
 	default:
@@ -319,6 +335,9 @@ void AMainCharacter::RMBButtonReleased()
 		EKeyReleased();
 		break;
 	case ECharacterSkill::ECS_Burden:
+		break;
+	case ECharacterSkill::ECS_BlackHole:
+		BlackholeKeyReleased();
 		break;
 	case ECharacterSkill::ECS_MAX:
 		break;
@@ -513,12 +532,18 @@ float AMainCharacter::GetESkillRatio()
 
 void AMainCharacter::SkillChange()
 {
+	if (bIsCasting)
+		return;
+
 	switch (CurrentSkill)
 	{
 	case ECharacterSkill::ECS_Meteor:
 		CurrentSkill = ECharacterSkill::ECS_Burden;
 		break;
 	case ECharacterSkill::ECS_Burden:
+		CurrentSkill = ECharacterSkill::ECS_BlackHole;
+		break;
+	case ECharacterSkill::ECS_BlackHole:
 		CurrentSkill = ECharacterSkill::ECS_Meteor;
 		break;
 	case ECharacterSkill::ECS_MAX:
@@ -585,6 +610,119 @@ void AMainCharacter::FinishDeath()
 	{
 		DisableInput(PC);
 	}
+}
+
+void AMainCharacter::BlackHoleSkillPressed()
+{
+	if (bIsAttacking || CharacterState == ECharacterState::ECS_Cast)
+		return;
+
+	IsBlackholeKeyPressed = true;
+}
+
+void AMainCharacter::BlackholeTrail()
+{
+	if (IsBlackholeKeyPressed)
+	{
+
+		FVector2D ViewportSize;
+		if (GEngine && GEngine->GameViewport)
+		{
+			GEngine->GameViewport->GetViewportSize(ViewportSize);
+		}
+
+		FVector2D CrosshairLocation(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
+		FVector CrosshairWorldPosition;
+		FVector CrosshairWorldDirection;
+
+		bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
+			UGameplayStatics::GetPlayerController(this, 0),
+			CrosshairLocation,
+			CrosshairWorldPosition,
+			CrosshairWorldDirection);
+
+		if (bScreenToWorld)
+		{
+			FHitResult ScreenTraceHit;
+			const FVector Start = CrosshairWorldPosition;
+			const FVector End = CrosshairWorldPosition + CrosshairWorldDirection * ESkillRange;
+
+			FVector BeamEndPoint = End;
+
+			GetWorld()->LineTraceSingleByChannel(
+				ScreenTraceHit,
+				Start,
+				End,
+				ECollisionChannel::ECC_Visibility);
+			if (ScreenTraceHit.bBlockingHit) // was there a trace hit?
+			{
+				BeamEndPoint = ScreenTraceHit.Location;
+				BlackholePosition = ScreenTraceHit.Location;
+				//DrawDebugLine(GetWorld(), Start, BeamEndPoint, FColor::Red, false, 2.f);
+				//DrawDebugPoint(GetWorld(), ScreenTraceHit.Location, 5.f, FColor::Red, false, 2.f);
+				SkillRangeParticle->SetHiddenInGame(false);
+				SkillRangeParticle->SetRelativeLocation(ScreenTraceHit.Location + FVector(0.0f, 0.0f, 10.f));
+			}
+		}
+
+	}
+}
+
+void AMainCharacter::BlackholeKeyReleased()
+{
+	if (bIsAttacking || !IsBlackholeKeyPressed)
+		return;
+
+	IsBlackholeKeyPressed = false;
+	SkillRangeParticle->SetHiddenInGame(true);
+	CurrentSkillName = FName("BlackHole");
+	// TODO ESkill 발사
+
+	CurrentSkillMaxCastingTime = BlackholeSkillCastingTime;
+	if (MainAnim && AttackMontage)
+	{
+		MainAnim->Montage_Play(AttackMontage);
+		MainAnim->Montage_JumpToSection(FName("Cast"));
+	}
+
+	bIsCasting = true;
+
+	CharacterState = ECharacterState::ECS_Cast;
+	if (MainPlayerController)
+	{
+		MainPlayerController->SetWidgetVisiblity(true);
+	}
+
+	GetWorldTimerManager().SetTimer(
+		ESkillTimer,
+		this,
+		&AMainCharacter::SendBlackhole,
+		BlackholeSkillCastingTime);
+}
+
+void AMainCharacter::SendBlackhole()
+{
+	if (MainAnim && AttackMontage)
+	{
+		MainAnim->Montage_Play(AttackMontage);
+		MainAnim->Montage_JumpToSection(FName("Rift"));
+
+		if (MeteorParticle && BlackholeUltimateParticle)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BlackholeCastParticle, BlackholePosition);
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BlackholeUltimateParticle, BlackholePosition);
+		}
+	}
+
+	bIsCasting = false;
+	CharacterState = ECharacterState::ECS_Normal;
+	if (MainPlayerController)
+	{
+		MainPlayerController->SetWidgetVisiblity(false);
+	}
+
+	/////
+	//MeteorAttackCheck();
 }
 
 

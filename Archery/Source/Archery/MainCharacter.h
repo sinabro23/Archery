@@ -20,6 +20,7 @@ enum class ECharacterSkill : uint8
 {
 	ECS_Meteor = 0,
 	ECS_Burden,
+	ECS_BlackHole,
 
 	ECS_MAX
 };
@@ -99,6 +100,12 @@ private:
 	UParticleSystem* MeteorAreaParticle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* BlackholeCastParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* BlackholeUltimateParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UParticleSystemComponent* SkillRangeParticle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
@@ -110,8 +117,10 @@ private:
 	class UMainAnimInstance* MainAnim;
 
 	FVector MeteorPosition = FVector();
+	FVector BlackholePosition = FVector();
 
 	bool IsEKeyPressed = false;
+	bool IsBlackholeKeyPressed = false;
 	
 	float ESkillRange = 3000.f;
 
@@ -125,6 +134,8 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Casting", meta = (AllowPrivateAccess = "true"))
 	float ESkillCastingTime = 1.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Casting", meta = (AllowPrivateAccess = "true"))
+	float BlackholeSkillCastingTime = 3.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Casting", meta = (AllowPrivateAccess = "true"))
 	float CurrentCastingTime = 0.f;
@@ -132,6 +143,7 @@ private:
 	float CurrentSkillMaxCastingTime = 0.f;
 	
 	FTimerHandle ESkillTimer;
+	FTimerHandle BlackHoleSkillTimer;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Casting", meta = (AllowPrivateAccess = "true"))
 	FName CurrentSkillName = FName("None");
@@ -153,6 +165,8 @@ private:
 	UTexture2D* MeteorTexture;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UTexture2D* BurdenTexture;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UTexture2D* BlackholeTexture;
 	///
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
@@ -214,4 +228,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishDeath();
+
+	void BlackHoleSkillPressed();
+	void BlackholeTrail();
+
+	void BlackholeKeyReleased();
+	void SendBlackhole();
 };

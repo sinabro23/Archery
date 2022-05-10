@@ -46,7 +46,7 @@ private:
 	FVector FireballDirection = FVector();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireBall", meta = (AllowPrivateAccess = "true"))
-	float Speed = 1000.f;
+	float Speed = 2000.f;
 
 	float RemainTime = 0.f;
 
