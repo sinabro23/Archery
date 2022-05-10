@@ -167,6 +167,10 @@ private:
 	UTexture2D* BurdenTexture;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UTexture2D* BlackholeTexture;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UTexture2D* HPPotionTexture;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UTexture2D* MPPotionTexture;
 	///
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
@@ -183,6 +187,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DeathMontage;
+
+	int32 HPPotionCount = 0;
+	int32 MPPotionCount = 0;
 
 public:
 	void MoveForward(float Value);
@@ -241,4 +248,6 @@ public:
 	void SetMP(float NewMP);
 	float GetCurrentMP();
 	
+	void DrinkHPPotion();
+	void DrinkMPPtion();
 };
