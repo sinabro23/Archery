@@ -234,4 +234,11 @@ public:
 
 	void BlackholeKeyReleased();
 	void SendBlackhole();
+
+	void SetHP(float NewHP);
+	float GetCurrentHP();
+
+	void SetMP(float NewMP);
+	float GetCurrentMP();
+	
 };

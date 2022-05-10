@@ -725,6 +725,37 @@ void AMainCharacter::SendBlackhole()
 	//MeteorAttackCheck();
 }
 
+void AMainCharacter::SetHP(float NewHP)
+{
+	CurrentHP = NewHP;
+
+	if(NewHP > MaxHP)
+	{
+		NewHP = MaxHP;
+	}
+
+	if (CurrentHP < 0.f)
+	{
+		CurrentHP = 0.f;
+		Die();
+	}
+}
+
+float AMainCharacter::GetCurrentHP()
+{
+	return CurrentHP;
+}
+
+void AMainCharacter::SetMP(float NewMP)
+{
+	CurrentMP = NewMP;
+}
+
+float AMainCharacter::GetCurrentMP()
+{
+	return CurrentMP;
+}
+
 
 
 
