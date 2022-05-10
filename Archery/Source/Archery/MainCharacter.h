@@ -124,7 +124,7 @@ private:
 	class AMainPlayerController* MainPlayerController = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Casting", meta = (AllowPrivateAccess = "true"))
-	float ESkillCastingTime = 3.f;
+	float ESkillCastingTime = 1.5f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Casting", meta = (AllowPrivateAccess = "true"))
 	float CurrentCastingTime = 0.f;
@@ -147,6 +147,8 @@ private:
 
 
 	///
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UTexture2D* FireballTexture;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UTexture2D* MeteorTexture;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
