@@ -81,6 +81,7 @@ void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	MainPlayerController = Cast<AMainPlayerController>(GetController());
+	CurrentItemCount = HPPotionCount;
 }
 
 float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
