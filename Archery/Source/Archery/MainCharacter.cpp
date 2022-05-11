@@ -81,7 +81,6 @@ void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	MainPlayerController = Cast<AMainPlayerController>(GetController());
-	CurrentItemCount = HPPotionCount;
 }
 
 float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -103,7 +102,7 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	ESkillTrail();
+	MeteorSkillTrail();
 	BlackholeTrail();
 	SetCharacterMovementSpeed();
 
@@ -127,8 +126,9 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAction("EKey", EInputEvent::IE_Pressed, this, &AMainCharacter::EKeyPressed);
-	PlayerInputComponent->BindAction("EKey", EInputEvent::IE_Released, this, &AMainCharacter::EKeyReleased);
+	PlayerInputComponent->BindAction("EKey", EInputEvent::IE_Pressed, this, &AMainCharacter::EkeyPressed);
+	PlayerInputComponent->BindAction("OneKey", EInputEvent::IE_Pressed, this, &AMainCharacter::OneKeyPressed);
+	PlayerInputComponent->BindAction("TwoKey", EInputEvent::IE_Pressed, this, &AMainCharacter::TwoKeyPressed);
 	PlayerInputComponent->BindAction("RMBButton", EInputEvent::IE_Pressed, this, &AMainCharacter::RMBButtonPressed);
 	PlayerInputComponent->BindAction("RMBButton", EInputEvent::IE_Released, this, &AMainCharacter::RMBButtonReleased);
 
@@ -210,7 +210,7 @@ void AMainCharacter::FireWeapon()
 	}
 }
 
-void AMainCharacter::EKeyPressed()
+void AMainCharacter::MeteorKeyPressed()
 {
 	if (bIsAttacking || CharacterState == ECharacterState::ECS_Cast)
 		return;
@@ -218,7 +218,7 @@ void AMainCharacter::EKeyPressed()
 	IsEKeyPressed = true;
 }
 
-void AMainCharacter::EKeyReleased()
+void AMainCharacter::MeteorKeyReleased()
 {
 	if (bIsAttacking || !IsEKeyPressed)
 		return;
@@ -250,7 +250,7 @@ void AMainCharacter::EKeyReleased()
 		ESkillCastingTime);
 }
 
-void AMainCharacter::ESkillTrail()
+void AMainCharacter::MeteorSkillTrail()
 {
 
 	if (IsEKeyPressed)
@@ -305,7 +305,7 @@ void AMainCharacter::RMBButtonPressed()
 	switch (CurrentSkill)
 	{
 	case ECharacterSkill::ECS_Meteor:
-		EKeyPressed();
+		MeteorKeyPressed();
 		break;
 	case ECharacterSkill::ECS_Burden:
 
@@ -334,7 +334,7 @@ void AMainCharacter::RMBButtonReleased()
 	switch (CurrentSkill)
 	{
 	case ECharacterSkill::ECS_Meteor:
-		EKeyReleased();
+		MeteorKeyReleased();
 		break;
 	case ECharacterSkill::ECS_Burden:
 		break;
@@ -772,6 +772,33 @@ void AMainCharacter::DrinkHPPotion()
 
 void AMainCharacter::DrinkMPPtion()
 {
+}
+
+void AMainCharacter::OneKeyPressed()
+{
+	CurrentItem = ECharacterItem::ECI_HPPotion;
+}
+
+void AMainCharacter::TwoKeyPressed()
+{
+	CurrentItem = ECharacterItem::ECI_MPPotion;
+}
+
+void AMainCharacter::EkeyPressed()
+{
+	switch (CurrentItem)
+	{
+	case ECharacterItem::ECI_HPPotion:
+		DrinkHPPotion();
+		break;
+	case ECharacterItem::ECI_MPPotion:
+		DrinkMPPtion();
+		break;
+	case ECharacterItem::ECI_MAX:
+		break;
+	default:
+		break;
+	}
 }
 
 

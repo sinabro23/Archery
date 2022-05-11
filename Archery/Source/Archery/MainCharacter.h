@@ -26,7 +26,7 @@ enum class ECharacterSkill : uint8
 };
 
 UENUM(BlueprintType)
-enum class ECurrentItem : uint8
+enum class ECharacterItem : uint8
 {
 	ECI_HPPotion,
 	ECI_MPPotion,
@@ -63,7 +63,7 @@ private:
 	ECharacterState CharacterState = ECharacterState::ECS_Normal;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
-	ECurrentItem CurrentItem = ECurrentItem::ECI_HPPotion;
+	ECharacterItem CurrentItem = ECharacterItem::ECI_HPPotion;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -215,9 +215,9 @@ public:
 
 	void FireWeapon();
 
-	void EKeyPressed();
-	void EKeyReleased();
-	void ESkillTrail();
+	void MeteorKeyPressed();
+	void MeteorKeyReleased();
+	void MeteorSkillTrail();
 
 	void RMBButtonPressed();
 	void RMBButtonReleased();
@@ -266,4 +266,8 @@ public:
 
 	void DrinkHPPotion();
 	void DrinkMPPtion();
+
+	void OneKeyPressed();
+	void TwoKeyPressed();
+	void EkeyPressed();
 };
