@@ -111,6 +111,17 @@ void AMainCharacter::Tick(float DeltaTime)
 	{
 		CurrentCastingTime = GetWorldTimerManager().GetTimerElapsed(ESkillTimer);
 	}
+
+	if (IsDrinkingHPPotion)
+	{
+		SetHP(CurrentHP += DeltaTime * HPPotionHealAmount);
+	}
+
+	if (IsDrinkingMPPotion)
+	{
+		SetMP(CurrentMP += DeltaTime * MPPotionHealAmount);
+	}
+	
 	
 }
 
@@ -433,6 +444,8 @@ void AMainCharacter::SendMeteor()
 	/////
 	MeteorAttackCheck();
 
+	SetMP(CurrentMP - MeteorMPAMount);
+
 }
 
 void AMainCharacter::SendBurden()
@@ -491,6 +504,7 @@ void AMainCharacter::SendBurden()
 
 			AFireBall* Fireball = GetWorld()->SpawnActor<AFireBall>(SocketTransform.GetLocation(), GetActorRotation());
 			Fireball->StartFireBall(CrosshairWorldDirection, this);
+			SetMP(CurrentMP - FireballMPAMount);
 		}
 	}
 }
@@ -726,6 +740,7 @@ void AMainCharacter::SendBlackhole()
 		MainPlayerController->SetWidgetVisiblity(false);
 	}
 
+	SetMP(CurrentMP - BlackholeMPAMount);
 	/////
 	//MeteorAttackCheck();
 }
@@ -768,10 +783,23 @@ void AMainCharacter::TakeHPPotion()
 
 void AMainCharacter::DrinkHPPotion()
 {
+	if (HPPotionCount <= 0)
+		return;
+
+	HPPotionCount--;
+	IsDrinkingHPPotion = true;
+	GetWorldTimerManager().SetTimer(HPPotionTimer, this, &AMainCharacter::EndHPHealing, 0.5f);
+	//SetHP(CurrentHP + HPPotionHealAmount);
 }
 
 void AMainCharacter::DrinkMPPtion()
 {
+	if (MPPotionCount <= 0)
+		return;
+
+	MPPotionCount--;
+	IsDrinkingMPPotion = true;
+	GetWorldTimerManager().SetTimer(MPPotionTimer, this, &AMainCharacter::EndMPHealing, 0.5f);
 }
 
 void AMainCharacter::OneKeyPressed()
@@ -799,6 +827,16 @@ void AMainCharacter::EkeyPressed()
 	default:
 		break;
 	}
+}
+
+void AMainCharacter::EndHPHealing()
+{
+	IsDrinkingHPPotion = false;
+}
+
+void AMainCharacter::EndMPHealing()
+{
+	IsDrinkingMPPotion = false;
 }
 
 

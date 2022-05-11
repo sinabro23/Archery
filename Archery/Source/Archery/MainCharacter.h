@@ -201,10 +201,27 @@ private:
 	UAnimMontage* DeathMontage;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-	int32 HPPotionCount = 0;
+	int32 HPPotionCount = 5;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-	int32 MPPotionCount = 0;
+	int32 MPPotionCount = 5;
 
+	bool IsDrinkingHPPotion = false;
+	bool IsDrinkingMPPotion = false;
+
+	FTimerHandle HPPotionTimer;
+	FTimerHandle MPPotionTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	float HPPotionHealAmount = 30.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	float MPPotionHealAmount = 50.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	float MeteorMPAMount = 20.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	float FireballMPAMount = 3.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	float BlackholeMPAMount = 40.f;
 public:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -270,4 +287,7 @@ public:
 	void OneKeyPressed();
 	void TwoKeyPressed();
 	void EkeyPressed();
+
+	void EndHPHealing();
+	void EndMPHealing();
 };
