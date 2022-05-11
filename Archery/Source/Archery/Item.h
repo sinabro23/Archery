@@ -27,7 +27,7 @@ protected:
 	UStaticMeshComponent* ItemMesh = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	class USphereComponent* WidgetSphere = nullptr;
+	class USphereComponent* SphereComp = nullptr;
 
 
 

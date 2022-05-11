@@ -13,9 +13,9 @@ AItem::AItem()
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
 	SetRootComponent(ItemMesh);
 
-	WidgetSphere = CreateDefaultSubobject<USphereComponent>(TEXT("WidgetSphere"));
-	WidgetSphere->SetupAttachment(GetRootComponent());
-	WidgetSphere->SetSphereRadius(160.f);
+	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
+	SphereComp->SetupAttachment(GetRootComponent());
+	SphereComp->SetSphereRadius(80.f);
 
 }
 

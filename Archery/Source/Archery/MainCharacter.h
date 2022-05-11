@@ -25,6 +25,15 @@ enum class ECharacterSkill : uint8
 	ECS_MAX
 };
 
+UENUM(BlueprintType)
+enum class ECurrentItem : uint8
+{
+	ECI_HPPotion,
+	ECI_MPPotion,
+
+	ECI_MAX
+};
+
 UCLASS()
 class ARCHERY_API AMainCharacter : public ACharacter
 {
@@ -52,6 +61,9 @@ public:
 private:
 
 	ECharacterState CharacterState = ECharacterState::ECS_Normal;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	ECurrentItem CurrentItem = ECurrentItem::ECI_HPPotion;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -146,7 +158,7 @@ private:
 	FTimerHandle BlackHoleSkillTimer;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Casting", meta = (AllowPrivateAccess = "true"))
-	FName CurrentSkillName = FName("None");
+	FName CurrentSkillName = FName("Meteor");
 
 	// 움직임 속도
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
@@ -188,7 +200,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DeathMontage;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	int32 HPPotionCount = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	int32 MPPotionCount = 0;
 
 public:
@@ -248,6 +262,8 @@ public:
 	void SetMP(float NewMP);
 	float GetCurrentMP();
 	
+	void TakeHPPotion();
+
 	void DrinkHPPotion();
 	void DrinkMPPtion();
 };

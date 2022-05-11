@@ -73,6 +73,7 @@ AMainCharacter::AMainCharacter()
 	{
 		BlackholeUltimateParticle = PS_BlackholeShot.Object;
 	}
+
 }
 
 // Called when the game starts or when spawned
@@ -539,12 +540,15 @@ void AMainCharacter::SkillChange()
 	{
 	case ECharacterSkill::ECS_Meteor:
 		CurrentSkill = ECharacterSkill::ECS_Burden;
+		CurrentSkillName = FName("Fireball");
 		break;
 	case ECharacterSkill::ECS_Burden:
 		CurrentSkill = ECharacterSkill::ECS_BlackHole;
+		CurrentSkillName = FName("BlackHole");
 		break;
 	case ECharacterSkill::ECS_BlackHole:
 		CurrentSkill = ECharacterSkill::ECS_Meteor;
+		CurrentSkillName = FName("Meteor");
 		break;
 	case ECharacterSkill::ECS_MAX:
 		break;
@@ -754,6 +758,19 @@ void AMainCharacter::SetMP(float NewMP)
 float AMainCharacter::GetCurrentMP()
 {
 	return CurrentMP;
+}
+
+void AMainCharacter::TakeHPPotion()
+{
+	HPPotionCount += 1;
+}
+
+void AMainCharacter::DrinkHPPotion()
+{
+}
+
+void AMainCharacter::DrinkMPPtion()
+{
 }
 
 
