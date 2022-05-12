@@ -223,6 +223,9 @@ void AMainCharacter::FireWeapon()
 
 void AMainCharacter::MeteorKeyPressed()
 {
+	if (CurrentMP < MeteorMPAMount)
+		return;
+
 	if (bIsAttacking || CharacterState == ECharacterState::ECS_Cast)
 		return;
 
@@ -313,6 +316,7 @@ void AMainCharacter::MeteorSkillTrail()
 
 void AMainCharacter::RMBButtonPressed()
 {
+
 	switch (CurrentSkill)
 	{
 	case ECharacterSkill::ECS_Meteor:
@@ -320,7 +324,7 @@ void AMainCharacter::RMBButtonPressed()
 		break;
 	case ECharacterSkill::ECS_Burden:
 
-		if (bIsBurden)
+		if (bIsBurden || CurrentMP < FireballMPAMount)
 			return;
 
 		bIsBurden = true;
@@ -342,6 +346,7 @@ void AMainCharacter::RMBButtonPressed()
 
 void AMainCharacter::RMBButtonReleased()
 {
+
 	switch (CurrentSkill)
 	{
 	case ECharacterSkill::ECS_Meteor:
@@ -357,6 +362,7 @@ void AMainCharacter::RMBButtonReleased()
 	default:
 		break;
 	}
+
 }
 
 void AMainCharacter::SendFireBall()
@@ -633,7 +639,7 @@ void AMainCharacter::FinishDeath()
 
 void AMainCharacter::BlackHoleSkillPressed()
 {
-	if (bIsAttacking || CharacterState == ECharacterState::ECS_Cast)
+	if (bIsAttacking || CharacterState == ECharacterState::ECS_Cast || CurrentMP < BlackholeMPAMount)
 		return;
 
 	IsBlackholeKeyPressed = true;
@@ -872,6 +878,8 @@ void AMainCharacter::EndMPHealing()
 {
 	IsDrinkingMPPotion = false;
 }
+
+
 
 
 

@@ -77,6 +77,10 @@ void AEnemy::BeginPlay()
 	}
 
 	StunParticle->SetActive(false);
+
+	BlackholePosition = GetActorLocation();
+
+	
 }
 
 // Called every frame
@@ -92,6 +96,9 @@ void AEnemy::Tick(float DeltaTime)
 	{
 		StunParticle->SetActive(false);
 	}
+
+	DraggedToBlackhole(DeltaTime);
+
 }
 
 // Called to bind functionality to input
@@ -160,6 +167,9 @@ void AEnemy::OnAttackedBlackhole(float DamageAmount, AMainCharacter* MainCharact
 	}
 	
 	GetWorldTimerManager().SetTimer(BlackholeAttackTimer, this, &AEnemy::BlackholeRepeat, BlackholeTime);
+	BlackholePosition = MainCharacter->GetBlackholePosition();
+
+	bIsOnBlackhole = true;
 }
 
 float AEnemy::GetMaxHP()
@@ -181,7 +191,7 @@ void AEnemy::SetHP(float NewHP)
 {
 	CurrentHP = NewHP;
 
-	if (CurrentHP < 0.f)
+	if (CurrentHP <= 0.f)
 	{
 		CurrentHP = 0.f;
 		Die();
@@ -213,6 +223,7 @@ void AEnemy::Die()
 		return;
 
 	bDying = true;
+	bStunned = false;
 
 	HideHealthBar();
 
@@ -420,9 +431,17 @@ void AEnemy::DestroyEnemy()
 
 void AEnemy::BlackholeRepeat()
 {
+	if (bDying)
+	{
+		bIsOnBlackhole = false;
+		SetHP(0);
+		return;
+	}
+
 	if (CurrentBlackholeCount > MaxBlackholeCount)
 	{
 		CurrentBlackholeCount = 0;
+		bIsOnBlackhole = false;
 	}
 	else
 	{
@@ -430,5 +449,20 @@ void AEnemy::BlackholeRepeat()
 		SetStunned(true);
 		CurrentBlackholeCount++;
 		GetWorldTimerManager().SetTimer(BlackholeAttackTimer, this, &AEnemy::BlackholeRepeat, BlackholeTime);
+		
+		float NewHP = CurrentHP - 15.f;
+		SetHP(NewHP);
+	}
+}
+
+void AEnemy::DraggedToBlackhole(float DeltaTime)
+{
+	if (bIsOnBlackhole)
+	{
+		FVector DirectToBlackhole = BlackholePosition - GetActorLocation();
+		if (DirectToBlackhole.Normalize())
+		{
+			SetActorLocation(GetActorLocation() + DirectToBlackhole * DeltaTime * 60.f);
+		}
 	}
 }

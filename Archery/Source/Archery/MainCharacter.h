@@ -223,6 +223,8 @@ private:
 	float FireballMPAMount = 3.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	float BlackholeMPAMount = 40.f;
+
+
 public:
 	void MoveForward(float Value);
 	void MoveRight(float Value);

@@ -137,6 +137,10 @@ private:
 	FTimerHandle BlackholeAttackTimer;
 	float BlackholeTime = 0.5;
 
+	int32 CurrentBlackholeCount = 0;
+	int32 MaxBlackholeCount = 6;
+	FVector BlackholePosition = FVector();
+	bool bIsOnBlackhole = false;
 public:
 	void OnAttacked(float DamageAmount, class AMainCharacter* MainCharacter);
 	void OnAttackedBlackhole(float DamageAmount, AMainCharacter* MainCharacter);
@@ -205,9 +209,8 @@ public:
 	void DestroyEnemy();
 
 	void BlackholeRepeat();
+	void DraggedToBlackhole(float DeltaTime);
 
-	int32 CurrentBlackholeCount = 0;
-	int32 MaxBlackholeCount = 6;
 
 public:
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
