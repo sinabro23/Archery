@@ -826,6 +826,11 @@ void AMainCharacter::TakeMPPotion()
 	MPPotionCount += 1;
 }
 
+void AMainCharacter::TakeCoin(int32 CoinAmount)
+{
+	CurrentCoinCount += CoinAmount;
+}
+
 void AMainCharacter::DrinkHPPotion()
 {
 	if (HPPotionCount <= 0)

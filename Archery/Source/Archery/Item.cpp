@@ -3,6 +3,7 @@
 
 #include "Item.h"
 #include "Components/SphereComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AItem::AItem()
@@ -16,6 +17,15 @@ AItem::AItem()
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	SphereComp->SetupAttachment(GetRootComponent());
 	SphereComp->SetSphereRadius(80.f);
+
+	ItemParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ItemParticle"));
+	ItemParticle->SetupAttachment(GetRootComponent());
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_PICKUPGLOW(TEXT("ParticleSystem'/Game/InfinityBladeEffects/Effects/FX_Treasure/Loot/P_Loot_Idle_Loop.P_Loot_Idle_Loop'"));
+	if (PS_PICKUPGLOW.Succeeded())
+	{
+		ItemParticle->SetTemplate(PS_PICKUPGLOW.Object);
+	}
 
 }
 

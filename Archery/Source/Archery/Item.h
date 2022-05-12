@@ -29,6 +29,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	class USphereComponent* SphereComp = nullptr;
 
+	UParticleSystemComponent* ItemParticle = nullptr;
 
 
 public:	

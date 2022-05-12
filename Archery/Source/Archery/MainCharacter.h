@@ -205,6 +205,8 @@ private:
 	int32 HPPotionCount = 5;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	int32 MPPotionCount = 5;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	int32 CurrentCoinCount = 1000;
 
 	bool IsDrinkingHPPotion = false;
 	bool IsDrinkingMPPotion = false;
@@ -285,6 +287,7 @@ public:
 	
 	void TakeHPPotion();
 	void TakeMPPotion();
+	void TakeCoin(int32 CoinAmount);
 
 	void DrinkHPPotion();
 	void DrinkMPPtion();
