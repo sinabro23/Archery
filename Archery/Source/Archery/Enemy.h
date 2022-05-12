@@ -134,8 +134,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UParticleSystemComponent* StunParticle = nullptr;
 
+	FTimerHandle BlackholeAttackTimer;
+	float BlackholeTime = 0.5;
+
 public:
 	void OnAttacked(float DamageAmount, class AMainCharacter* MainCharacter);
+	void OnAttackedBlackhole(float DamageAmount, AMainCharacter* MainCharacter);
 
 	float GetMaxHP();
 	float GetCurrentHP();
@@ -199,6 +203,11 @@ public:
 	void FinishDeath();
 
 	void DestroyEnemy();
+
+	void BlackholeRepeat();
+
+	int32 CurrentBlackholeCount = 0;
+	int32 MaxBlackholeCount = 6;
 
 public:
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }

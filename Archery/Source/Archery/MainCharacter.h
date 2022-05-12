@@ -196,6 +196,7 @@ private:
 	float MaxMP = 100.f;
 
 	float MeteorDamage = 10.f;
+	float BlackholeDamage = 10.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DeathMontage;
@@ -272,6 +273,7 @@ public:
 
 	void BlackholeKeyReleased();
 	void SendBlackhole();
+	void BlackholeAttackCheck();
 
 	void SetHP(float NewHP);
 	float GetCurrentHP();
@@ -290,4 +292,9 @@ public:
 
 	void EndHPHealing();
 	void EndMPHealing();
+
+public:
+
+	FORCEINLINE FVector GetBlackholePosition() { return BlackholePosition; };
+
 };

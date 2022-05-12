@@ -729,7 +729,7 @@ void AMainCharacter::SendBlackhole()
 		if (MeteorParticle && BlackholeUltimateParticle)
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BlackholeCastParticle, BlackholePosition);
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BlackholeUltimateParticle, BlackholePosition);
+		    UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BlackholeUltimateParticle, BlackholePosition);
 		}
 	}
 
@@ -741,8 +741,42 @@ void AMainCharacter::SendBlackhole()
 	}
 
 	SetMP(CurrentMP - BlackholeMPAMount);
-	/////
-	//MeteorAttackCheck();
+	BlackholeAttackCheck();
+}
+
+void AMainCharacter::BlackholeAttackCheck()
+{
+	FVector Center = BlackholePosition;
+	TArray<FOverlapResult> HitResults;
+	FCollisionQueryParams CollsionQueryParam(NAME_None, false, this);
+
+	bool bResult = GetWorld()->OverlapMultiByChannel(
+		HitResults,
+		Center,
+		FQuat::Identity,
+		ECollisionChannel::ECC_Pawn,
+		FCollisionShape::MakeSphere(600.f),
+		CollsionQueryParam
+	);
+
+	if (bResult)
+	{
+		for (auto HitResult : HitResults)
+		{
+			if (HitResult.Actor.IsValid())
+			{
+				AEnemy* HitEnemy = Cast<AEnemy>(HitResult.Actor);
+
+				if (HitEnemy)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("HIT ACTOR :%s"), *HitResult.Actor->GetName());
+					HitEnemy->OnAttackedBlackhole(BlackholeDamage, this);
+				}
+			}
+		}
+	}
+
+	//DrawDebugSphere(GetWorld(), Center, 600.f, 16, FColor::Green, false, 1.f);
 }
 
 void AMainCharacter::SetHP(float NewHP)

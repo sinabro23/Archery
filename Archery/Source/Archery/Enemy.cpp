@@ -149,6 +149,19 @@ void AEnemy::OnAttacked(float DamageAmount, AMainCharacter* MainCharacter)
 	}
 }
 
+void AEnemy::OnAttackedBlackhole(float DamageAmount, AMainCharacter* MainCharacter)
+{
+
+	PlayHitMontage(FName("HitReactFront"));
+	SetStunned(true);
+	if (EnemyController)
+	{
+		EnemyController->GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), MainCharacter);
+	}
+	
+	GetWorldTimerManager().SetTimer(BlackholeAttackTimer, this, &AEnemy::BlackholeRepeat, BlackholeTime);
+}
+
 float AEnemy::GetMaxHP()
 {
 	return MaxHP;
@@ -403,4 +416,19 @@ void AEnemy::FinishDeath()
 void AEnemy::DestroyEnemy()
 {
 	Destroy();
+}
+
+void AEnemy::BlackholeRepeat()
+{
+	if (CurrentBlackholeCount > MaxBlackholeCount)
+	{
+		CurrentBlackholeCount = 0;
+	}
+	else
+	{
+		PlayHitMontage(FName("HitReactFront"));
+		SetStunned(true);
+		CurrentBlackholeCount++;
+		GetWorldTimerManager().SetTimer(BlackholeAttackTimer, this, &AEnemy::BlackholeRepeat, BlackholeTime);
+	}
 }
