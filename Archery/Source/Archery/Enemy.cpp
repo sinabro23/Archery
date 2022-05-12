@@ -15,6 +15,9 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "HPPotion.h"
+#include "MPPotion.h"
+#include "Coin.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -158,6 +161,8 @@ void AEnemy::OnAttacked(float DamageAmount, AMainCharacter* MainCharacter)
 
 void AEnemy::OnAttackedBlackhole(float DamageAmount, AMainCharacter* MainCharacter)
 {
+	if (bDying)
+		return;
 
 	PlayHitMontage(FName("HitReactFront"));
 	SetStunned(true);
@@ -239,7 +244,6 @@ void AEnemy::Die()
 		EnemyController->GetBlackboardComponent()->SetValueAsBool(TEXT("Dead"), true);
 		EnemyController->StopMovement();
 	}
-
 }
 
 void AEnemy::PlayHitMontage(FName Section, float PlayRate)
@@ -427,6 +431,7 @@ void AEnemy::FinishDeath()
 void AEnemy::DestroyEnemy()
 {
 	Destroy();
+	DropItem();
 }
 
 void AEnemy::BlackholeRepeat()
@@ -465,4 +470,32 @@ void AEnemy::DraggedToBlackhole(float DeltaTime)
 			SetActorLocation(GetActorLocation() + DirectToBlackhole * DeltaTime * 60.f);
 		}
 	}
+}
+
+void AEnemy::DropItem()
+{
+	FVector DropLocation = GetActorLocation() + (-1.f * GetActorUpVector()) * GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+
+	if (ShouldHappenInPercent(50))
+	{
+		ACoin* Coin = GetWorld()->SpawnActor<ACoin>(DropLocation + FVector(0.0f,0.0f, 15.f), FRotator::ZeroRotator);
+		int32 CoinAmount = FMath::FRandRange(1000, 1500);
+		Coin->SetCoinAmount(CoinAmount);
+	}
+	else
+	{
+		if (ShouldHappenInPercent(50))
+		{
+			GetWorld()->SpawnActor<AHPPotion>(DropLocation, FRotator::ZeroRotator);
+		}
+		else
+		{
+			GetWorld()->SpawnActor<AMPPotion>(DropLocation, FRotator::ZeroRotator);
+		}
+	}
+}
+
+bool AEnemy::ShouldHappenInPercent(int32 Percentage)
+{
+	return (FMath::RandRange(1, 100 / Percentage) == 1 ? true : false);
 }

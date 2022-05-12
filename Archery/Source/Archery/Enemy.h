@@ -141,6 +141,8 @@ private:
 	int32 MaxBlackholeCount = 6;
 	FVector BlackholePosition = FVector();
 	bool bIsOnBlackhole = false;
+
+
 public:
 	void OnAttacked(float DamageAmount, class AMainCharacter* MainCharacter);
 	void OnAttackedBlackhole(float DamageAmount, AMainCharacter* MainCharacter);
@@ -210,7 +212,8 @@ public:
 
 	void BlackholeRepeat();
 	void DraggedToBlackhole(float DeltaTime);
-
+	void DropItem();
+	bool ShouldHappenInPercent(int32 Percentage);
 
 public:
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
