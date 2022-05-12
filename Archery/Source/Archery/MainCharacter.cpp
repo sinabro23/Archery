@@ -821,6 +821,11 @@ void AMainCharacter::TakeHPPotion()
 	HPPotionCount += 1;
 }
 
+void AMainCharacter::TakeMPPotion()
+{
+	MPPotionCount += 1;
+}
+
 void AMainCharacter::DrinkHPPotion()
 {
 	if (HPPotionCount <= 0)

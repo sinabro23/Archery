@@ -284,6 +284,7 @@ public:
 	float GetCurrentMP();
 	
 	void TakeHPPotion();
+	void TakeMPPotion();
 
 	void DrinkHPPotion();
 	void DrinkMPPtion();
