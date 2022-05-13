@@ -24,6 +24,13 @@ void ACoin::PostInitializeComponents()
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ACoin::OnBeginOverlap);
 }
 
+void ACoin::Tick(float DeltaTime)
+{
+	FRotator Rotation = GetActorRotation();
+	Rotation.Yaw += DeltaTime * 45.f;
+	SetActorRotation(Rotation);
+}
+
 void ACoin::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor == nullptr)

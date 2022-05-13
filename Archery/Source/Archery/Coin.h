@@ -19,7 +19,7 @@ public:
 
 protected:
 	virtual void PostInitializeComponents() override;
-
+	virtual void Tick(float DeltaTime) override;
 private:
 	int32 CoinAmount = 1500;
 
