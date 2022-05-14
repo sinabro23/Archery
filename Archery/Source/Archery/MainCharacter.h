@@ -199,7 +199,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	float MaxMP = 100.f;
 
-	float MeteorDamage = 10.f;
+	float MeteorDamage = 5.f;
 	float BlackholeDamage = 10.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
@@ -233,6 +233,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UParticleSystemComponent* FireShieldParticle = nullptr;
 
+	FTimerHandle MeteorTimer;
+	float MeteorTime = 0.3f;
+	int32 MeteorCount = 0;
+
+	bool IsTapOn = false;
 public:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -309,6 +314,10 @@ public:
 
 	void FireShieldOn();
 	void FireShieldOff();
+
+	void MeteorRepeat();
+
+	void TapKeyPressed();
 
 public:
 

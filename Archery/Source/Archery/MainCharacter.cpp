@@ -180,8 +180,9 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("RMBButton", EInputEvent::IE_Released, this, &AMainCharacter::RMBButtonReleased);
 
 	PlayerInputComponent->BindAction("FireButton", IE_Pressed, this, &AMainCharacter::FireWeapon);
-
 	PlayerInputComponent->BindAction("NextSkill", IE_Pressed, this, &AMainCharacter::SkillChange);
+
+	PlayerInputComponent->BindAction("Tap", EInputEvent::IE_Pressed, this, &AMainCharacter::TapKeyPressed);
 }
 
 void AMainCharacter::PostInitializeComponents()
@@ -482,6 +483,8 @@ void AMainCharacter::SendMeteor()
 
 	/////
 	MeteorAttackCheck();
+	GetWorldTimerManager().SetTimer(MeteorTimer, this, &AMainCharacter::MeteorRepeat, MeteorTime);
+
 
 	SetMP(CurrentMP - MeteorMPAMount);
 
@@ -646,14 +649,13 @@ void AMainCharacter::MeteorAttackCheck()
 				
 				if (HitEnemy)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("HIT ACTOR :%s"), *HitResult.Actor->GetName());
 					HitEnemy->OnAttacked(MeteorDamage, this);
 				}
 			}
 		}
 	}
 
-	DrawDebugSphere(GetWorld(), Center, 400.f, 16, FColor::Green, false, 1.f);
+	//DrawDebugSphere(GetWorld(), Center, 400.f, 16, FColor::Green, false, 1.f);
 
 }
 
@@ -960,7 +962,61 @@ void AMainCharacter::FireShieldOff()
 	FireShieldParticle->SetHiddenInGame(true);
 }
 
+void AMainCharacter::MeteorRepeat()
+{
+	if (MeteorCount > 3)
+	{
+		MeteorCount = 0;
+		return;
+	}
 
+	MeteorCount++;
+
+	FVector Center = MeteorPosition - FVector(0.0f, 0.0f, 1000.f);
+	TArray<FOverlapResult> HitResults;
+	FCollisionQueryParams CollsionQueryParam(NAME_None, false, this);
+
+	bool bResult = GetWorld()->OverlapMultiByChannel(
+		HitResults,
+		Center,
+		FQuat::Identity,
+		ECollisionChannel::ECC_Pawn,
+		FCollisionShape::MakeSphere(400.f),
+		CollsionQueryParam
+	);
+
+	if (bResult)
+	{
+		for (auto HitResult : HitResults)
+		{
+			if (HitResult.Actor.IsValid())
+			{
+				AEnemy* HitEnemy = Cast<AEnemy>(HitResult.Actor);
+
+				if (HitEnemy)
+				{
+					HitEnemy->OnAttacked(MeteorDamage, this);
+				}
+			}
+		}
+	}
+
+	GetWorldTimerManager().SetTimer(MeteorTimer, this, &AMainCharacter::MeteorRepeat, MeteorTime);
+}
+
+void AMainCharacter::TapKeyPressed()
+{
+	if (IsTapOn)
+	{
+		IsTapOn = false;
+		MainPlayerController->SetTapHUDVisibility(false);
+	}
+	else
+	{
+		IsTapOn = true;
+		MainPlayerController->SetTapHUDVisibility(true);
+	}
+}
 
 
 

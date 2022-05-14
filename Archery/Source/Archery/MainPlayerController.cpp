@@ -3,6 +3,7 @@
 
 #include "MainPlayerController.h"
 #include "Blueprint/UserWidget.h"
+#include "MainCharacter.h"
 
 AMainPlayerController::AMainPlayerController()
 {
@@ -34,6 +35,24 @@ void AMainPlayerController::BeginPlay()
 		HUDOverlay->AddToViewport();
 		HUDOverlay->SetVisibility(ESlateVisibility::Visible);
 	}
+
+	if (TapHUDOverlayAsset)
+	{
+		TapHUDOverlay = CreateWidget<UUserWidget>(this, TapHUDOverlayAsset);
+	}
+
+	if (TapHUDOverlay)
+	{
+		TapHUDOverlay->AddToViewport();
+		TapHUDOverlay->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	MainCharacter = Cast<AMainCharacter>(GetOwner());
+}
+
+void AMainPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
 }
 
 void AMainPlayerController::SetWidgetVisiblity(bool Visible)
@@ -47,6 +66,19 @@ void AMainPlayerController::SetWidgetVisiblity(bool Visible)
 		SkillHUDOverlay->SetVisibility(ESlateVisibility::Hidden);
 	}
 
-
 	
 }
+
+void AMainPlayerController::SetTapHUDVisibility(bool Visible)
+{
+	if (Visible == true)
+	{
+		TapHUDOverlay->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		TapHUDOverlay->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+

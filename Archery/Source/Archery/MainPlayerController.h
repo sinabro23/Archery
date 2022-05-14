@@ -20,22 +20,34 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
 
 public:
+	class AMainCharacter* MainCharacter;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 	TSubclassOf<class UUserWidget> SkillHUDOverlayAsset;
 
 	UPROPERTY()
-	class UUserWidget* SkillHUDOverlay; //화면에 띄워질 HUD전체
+	class UUserWidget* SkillHUDOverlay;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 	TSubclassOf<class UUserWidget> HUDOverlayAsset;
 
 	UPROPERTY()
-	class UUserWidget* HUDOverlay; //화면에 띄워질 HUD전체
+	class UUserWidget* HUDOverlay; 
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
+	TSubclassOf<class UUserWidget> TapHUDOverlayAsset;
+
+	UPROPERTY()
+	class UUserWidget* TapHUDOverlay;
+
+private:
+	bool IsTapOn = false;
 public:
 	
 	void SetWidgetVisiblity(bool Visible);
 
+	void SetTapHUDVisibility(bool Visible);
 };
