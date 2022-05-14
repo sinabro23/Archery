@@ -176,6 +176,9 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("EKey", EInputEvent::IE_Pressed, this, &AMainCharacter::EkeyPressed);
 	PlayerInputComponent->BindAction("OneKey", EInputEvent::IE_Pressed, this, &AMainCharacter::OneKeyPressed);
 	PlayerInputComponent->BindAction("TwoKey", EInputEvent::IE_Pressed, this, &AMainCharacter::TwoKeyPressed);
+	PlayerInputComponent->BindAction("ThreeKey", EInputEvent::IE_Pressed, this, &AMainCharacter::ThreeKeyPressed);
+	PlayerInputComponent->BindAction("FourKey", EInputEvent::IE_Pressed, this, &AMainCharacter::FourKeyPressed);
+	PlayerInputComponent->BindAction("QKey", EInputEvent::IE_Pressed, this, &AMainCharacter::QKeyPressed);
 	PlayerInputComponent->BindAction("RMBButton", EInputEvent::IE_Pressed, this, &AMainCharacter::RMBButtonPressed);
 	PlayerInputComponent->BindAction("RMBButton", EInputEvent::IE_Released, this, &AMainCharacter::RMBButtonReleased);
 
@@ -912,12 +915,55 @@ void AMainCharacter::DrinkMPPtion()
 
 void AMainCharacter::OneKeyPressed()
 {
-	CurrentItem = ECharacterItem::ECI_HPPotion;
+	if (!IsTapOn || bIsCasting)
+		return;
+
+	CurrentSkill = ECharacterSkill::ECS_Burden;
+	TapKeyPressed();
 }
 
 void AMainCharacter::TwoKeyPressed()
 {
-	CurrentItem = ECharacterItem::ECI_MPPotion;
+	if (!IsTapOn || bIsCasting)
+		return;
+
+	CurrentSkill = ECharacterSkill::ECS_Meteor;
+	TapKeyPressed();
+}
+
+void AMainCharacter::ThreeKeyPressed()
+{
+	if (!IsTapOn || bIsCasting)
+		return;
+
+	CurrentSkill = ECharacterSkill::ECS_FireShield;
+	TapKeyPressed();
+}
+
+void AMainCharacter::FourKeyPressed()
+{
+	if (!IsTapOn || bIsCasting)
+		return;
+
+	CurrentSkill = ECharacterSkill::ECS_BlackHole;
+	TapKeyPressed();
+}
+
+void AMainCharacter::QKeyPressed()
+{
+	switch (CurrentItem)
+	{
+	case ECharacterItem::ECI_HPPotion:
+		CurrentItem = ECharacterItem::ECI_MPPotion;
+		break;
+	case ECharacterItem::ECI_MPPotion:
+		CurrentItem = ECharacterItem::ECI_HPPotion;
+		break;
+	case ECharacterItem::ECI_MAX:
+		break;
+	default:
+		break;
+	}
 }
 
 void AMainCharacter::EkeyPressed()

@@ -307,6 +307,11 @@ public:
 
 	void OneKeyPressed();
 	void TwoKeyPressed();
+	void ThreeKeyPressed();
+	void FourKeyPressed();
+
+	void QKeyPressed();
+
 	void EkeyPressed();
 
 	void EndHPHealing();
