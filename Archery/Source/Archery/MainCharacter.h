@@ -21,6 +21,7 @@ enum class ECharacterSkill : uint8
 	ECS_Meteor = 0,
 	ECS_Burden,
 	ECS_BlackHole,
+	ECS_FireShield,
 
 	ECS_MAX
 };
@@ -133,6 +134,7 @@ private:
 
 	bool IsEKeyPressed = false;
 	bool IsBlackholeKeyPressed = false;
+	bool IsShieldOn = false;
 	
 	float ESkillRange = 3000.f;
 
@@ -180,6 +182,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UTexture2D* BlackholeTexture;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UTexture2D* FireShieldTexture;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UTexture2D* HPPotionTexture;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UTexture2D* MPPotionTexture;
@@ -226,6 +230,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	float BlackholeMPAMount = 40.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UParticleSystemComponent* FireShieldParticle = nullptr;
 
 public:
 	void MoveForward(float Value);
@@ -300,6 +306,9 @@ public:
 
 	void EndHPHealing();
 	void EndMPHealing();
+
+	void FireShieldOn();
+	void FireShieldOff();
 
 public:
 

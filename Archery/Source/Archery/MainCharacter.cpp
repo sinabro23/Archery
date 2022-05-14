@@ -74,6 +74,14 @@ AMainCharacter::AMainCharacter()
 		BlackholeUltimateParticle = PS_BlackholeShot.Object;
 	}
 
+	FireShieldParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("FireShield"));
+	FireShieldParticle->SetupAttachment(GetRootComponent());
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_FireShield(TEXT("ParticleSystem'/Game/RPGEffects/Particles/P_Mage_Fire_Shield.P_Mage_Fire_Shield'"));
+	if (PS_FireShield.Succeeded())
+	{
+		FireShieldParticle->SetTemplate(PS_FireShield.Object);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -81,21 +89,41 @@ void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	MainPlayerController = Cast<AMainPlayerController>(GetController());
+	FireShieldParticle->SetHiddenInGame(true);
 }
 
 float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (CurrentHP - DamageAmount <= 0.f)
+	if (IsShieldOn)
 	{
-		CurrentHP = 0.f;
-		Die();
+		float DamageAmoutOnShield = DamageAmount / 2.f;
+		if (CurrentHP - DamageAmoutOnShield <= 0.f)
+		{
+			CurrentHP = 0.f;
+			Die();
+		}
+		else
+		{
+			CurrentHP -= DamageAmoutOnShield;
+		}
+
+		return DamageAmoutOnShield;
 	}
 	else
 	{
-		CurrentHP -= DamageAmount;
+		if (CurrentHP - DamageAmount <= 0.f)
+		{
+			CurrentHP = 0.f;
+			Die();
+		}
+		else
+		{
+			CurrentHP -= DamageAmount;
+		}
+
+		return DamageAmount;
 	}
 
-	return DamageAmount;
 }
 
 // Called every frame
@@ -122,6 +150,14 @@ void AMainCharacter::Tick(float DeltaTime)
 		SetMP(CurrentMP += DeltaTime * MPPotionHealAmount);
 	}
 	
+	if (IsShieldOn)
+	{
+		SetMP(CurrentMP -= DeltaTime * 10.f);
+		if (CurrentMP <= 5.f)
+		{
+			FireShieldOff();
+		}
+	}
 	
 }
 
@@ -324,11 +360,12 @@ void AMainCharacter::RMBButtonPressed()
 		break;
 	case ECharacterSkill::ECS_Burden:
 		BurdenButtonPressed();
-	
-
 		break;
 	case ECharacterSkill::ECS_BlackHole:
 		BlackHoleSkillPressed();
+		break;
+	case ECharacterSkill::ECS_FireShield:
+		FireShieldOn();
 		break;
 	case ECharacterSkill::ECS_MAX:
 		break;
@@ -349,6 +386,9 @@ void AMainCharacter::RMBButtonReleased()
 		break;
 	case ECharacterSkill::ECS_BlackHole:
 		BlackholeKeyReleased();
+		break;
+	case ECharacterSkill::ECS_FireShield:
+		FireShieldOff();
 		break;
 	case ECharacterSkill::ECS_MAX:
 		break;
@@ -567,6 +607,10 @@ void AMainCharacter::SkillChange()
 		CurrentSkillName = FName("BlackHole");
 		break;
 	case ECharacterSkill::ECS_BlackHole:
+		CurrentSkill = ECharacterSkill::ECS_FireShield;
+		CurrentSkillName = FName("FireShield");
+		break;
+	case ECharacterSkill::ECS_FireShield:
 		CurrentSkill = ECharacterSkill::ECS_Meteor;
 		CurrentSkillName = FName("Meteor");
 		break;
@@ -899,6 +943,21 @@ void AMainCharacter::EndHPHealing()
 void AMainCharacter::EndMPHealing()
 {
 	IsDrinkingMPPotion = false;
+}
+
+void AMainCharacter::FireShieldOn()
+{
+	if (IsShieldOn)
+		return;
+
+	IsShieldOn = true;
+	FireShieldParticle->SetHiddenInGame(false);
+}
+
+void AMainCharacter::FireShieldOff()
+{
+	IsShieldOn = false;
+	FireShieldParticle->SetHiddenInGame(true);
 }
 
 
