@@ -62,11 +62,7 @@ void AFireBall::Tick(float DeltaTime)
 
 	RemainTime += DeltaTime;
 
-	//if (IsFired)
-	{
-		SendFireball(DeltaTime);
-	}
-
+	SendFireball(DeltaTime);
 
 	if (RemainTime > 3.f)
 	{
@@ -92,6 +88,11 @@ void AFireBall::SendFireball(float DeltaTime)
 	FVector CurrentLocation = GetActorLocation() += FireballDirection * Speed * DeltaTime;
 
 	SetActorLocation(CurrentLocation);
+}
+
+void AFireBall::SendForward(float DeltaTime)
+{
+	SetActorLocation(GetActorLocation() + GetActorForwardVector() * Speed * DeltaTime);
 }
 
 void AFireBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

@@ -323,16 +323,9 @@ void AMainCharacter::RMBButtonPressed()
 		MeteorKeyPressed();
 		break;
 	case ECharacterSkill::ECS_Burden:
+		BurdenButtonPressed();
+	
 
-		if (bIsBurden || CurrentMP < FireballMPAMount)
-			return;
-
-		bIsBurden = true;
-		if (MainAnim && BurdenMontage)
-		{
-			MainAnim->Montage_Play(BurdenMontage);
-			MainAnim->Montage_JumpToSection(FName("Burden"));
-		}
 		break;
 	case ECharacterSkill::ECS_BlackHole:
 		BlackHoleSkillPressed();
@@ -508,8 +501,14 @@ void AMainCharacter::SendBurden()
 				//DrawDebugPoint(GetWorld(), ScreenTraceHit.Location, 5.f, FColor::Red, false, 2.f);
 			}
 
+
+			FVector FireballLocation = End - SocketTransform.GetLocation();
+			FireballLocation.Normalize();
+
 			AFireBall* Fireball = GetWorld()->SpawnActor<AFireBall>(SocketTransform.GetLocation(), GetActorRotation());
-			Fireball->StartFireBall(CrosshairWorldDirection, this);
+			Fireball->StartFireBall(FireballLocation, this);
+
+
 			SetMP(CurrentMP - FireballMPAMount);
 		}
 	}
@@ -634,6 +633,19 @@ void AMainCharacter::FinishDeath()
 	if (PC)
 	{
 		DisableInput(PC);
+	}
+}
+
+void AMainCharacter::BurdenButtonPressed()
+{
+	if (bIsBurden || CurrentMP < FireballMPAMount || bIsAttacking)
+		return;
+
+	bIsBurden = true;
+	if (MainAnim && BurdenMontage)
+	{
+		MainAnim->Montage_Play(BurdenMontage);
+		MainAnim->Montage_JumpToSection(FName("Burden"));
 	}
 }
 

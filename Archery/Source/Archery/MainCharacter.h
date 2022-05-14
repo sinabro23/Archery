@@ -222,7 +222,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	float MeteorMPAMount = 20.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
-	float FireballMPAMount = 3.f;
+	float FireballMPAMount = 2.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	float BlackholeMPAMount = 40.f;
 
@@ -271,6 +271,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishDeath();
+
+	void BurdenButtonPressed();
 
 	void BlackHoleSkillPressed();
 	void BlackholeTrail();

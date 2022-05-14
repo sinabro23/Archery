@@ -57,6 +57,7 @@ private:
 public:
 	void StartFireBall(const FVector& Direction, class AMainCharacter* CauserCharacter);
 	void SendFireball(float DeltaTime);
+	void SendForward(float DeltaTime);
 
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
