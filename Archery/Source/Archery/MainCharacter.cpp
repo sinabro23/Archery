@@ -158,6 +158,8 @@ void AMainCharacter::Tick(float DeltaTime)
 			FireShieldOff();
 		}
 	}
+
+	CurrentMPCheck();
 	
 }
 
@@ -1067,6 +1069,57 @@ void AMainCharacter::TapKeyPressed()
 	{
 		IsTapOn = true;
 		MainPlayerController->SetTapHUDVisibility(true);
+	}
+}
+
+void AMainCharacter::CurrentMPCheck()
+{
+	switch (CurrentSkill)
+	{
+	case ECharacterSkill::ECS_Meteor:
+		if (CurrentMP < MeteorMPAMount)
+		{
+			IsCurrentSkillAvailable = false;	
+		}
+		else
+		{
+			IsCurrentSkillAvailable = true;
+		}
+		break;
+	case ECharacterSkill::ECS_Burden:
+		if (CurrentMP < FireballMPAMount)
+		{
+			IsCurrentSkillAvailable = false;
+		}
+		else
+		{
+			IsCurrentSkillAvailable = true;
+		}
+		break;
+	case ECharacterSkill::ECS_BlackHole:
+		if (CurrentMP < BlackholeMPAMount)
+		{
+			IsCurrentSkillAvailable = false;
+		}
+		else
+		{
+			IsCurrentSkillAvailable = true;
+		}
+		break;
+	case ECharacterSkill::ECS_FireShield:
+		if (CurrentMP < 5.f)
+		{
+			IsCurrentSkillAvailable = false;
+		}
+		else
+		{
+			IsCurrentSkillAvailable = true;
+		}
+		break;
+	case ECharacterSkill::ECS_MAX:
+		break;
+	default:
+		break;
 	}
 }
 

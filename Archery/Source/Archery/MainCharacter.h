@@ -162,6 +162,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Casting", meta = (AllowPrivateAccess = "true"))
 	FName CurrentSkillName = FName("Meteor");
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Casting", meta = (AllowPrivateAccess = "true"))
+	bool IsCurrentSkillAvailable = true;
+
 	// 움직임 속도
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	float BaseMovementSpeed = 650.f;
@@ -326,6 +329,7 @@ public:
 
 	void TapKeyPressed();
 
+	void CurrentMPCheck();
 public:
 
 	FORCEINLINE FVector GetBlackholePosition() { return BlackholePosition; };
