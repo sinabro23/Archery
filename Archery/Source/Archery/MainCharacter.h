@@ -11,7 +11,7 @@ enum class ECharacterState : uint8
 {
 	ECS_Normal, 
 	ECS_Cast,
-
+	ECS_Shield,
 	ECS_MAX 
 };
 
@@ -167,6 +167,8 @@ private:
 	float BaseMovementSpeed = 650.f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	float CastingMovementSpeed = 400.f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	float ShieldMovementSpeed = 1200.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	ECharacterSkill CurrentSkill = ECharacterSkill::ECS_Meteor;
@@ -221,7 +223,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	float HPPotionHealAmount = 30.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
-	float MPPotionHealAmount = 50.f;
+	float MPPotionHealAmount = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	float MeteorMPAMount = 20.f;

@@ -585,6 +585,9 @@ void AMainCharacter::SetCharacterMovementSpeed()
 	case ECharacterState::ECS_Cast:
 		GetCharacterMovement()->MaxWalkSpeed = CastingMovementSpeed;
 		break;
+	case ECharacterState::ECS_Shield:
+		GetCharacterMovement()->MaxWalkSpeed = ShieldMovementSpeed;
+		break;
 	case ECharacterState::ECS_MAX:
 		break;
 	default:
@@ -999,12 +1002,15 @@ void AMainCharacter::FireShieldOn()
 		return;
 
 	IsShieldOn = true;
+	CharacterState = ECharacterState::ECS_Shield;
 	FireShieldParticle->SetHiddenInGame(false);
+	
 }
 
 void AMainCharacter::FireShieldOff()
 {
 	IsShieldOn = false;
+	CharacterState = ECharacterState::ECS_Normal;
 	FireShieldParticle->SetHiddenInGame(true);
 }
 
