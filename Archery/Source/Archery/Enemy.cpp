@@ -175,6 +175,8 @@ void AEnemy::OnAttackedBlackhole(float DamageAmount, AMainCharacter* MainCharact
 	BlackholePosition = MainCharacter->GetBlackholePosition();
 
 	bIsOnBlackhole = true;
+
+	BlackholeDamage = DamageAmount;
 }
 
 float AEnemy::GetMaxHP()
@@ -455,7 +457,7 @@ void AEnemy::BlackholeRepeat()
 		CurrentBlackholeCount++;
 		GetWorldTimerManager().SetTimer(BlackholeAttackTimer, this, &AEnemy::BlackholeRepeat, BlackholeTime);
 		
-		float NewHP = CurrentHP - 15.f;
+		float NewHP = CurrentHP - BlackholeDamage;
 		SetHP(NewHP);
 	}
 }

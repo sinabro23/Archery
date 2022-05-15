@@ -142,6 +142,7 @@ private:
 	FVector BlackholePosition = FVector();
 	bool bIsOnBlackhole = false;
 
+	float BlackholeDamage = 0.f;
 
 public:
 	void OnAttacked(float DamageAmount, class AMainCharacter* MainCharacter);
