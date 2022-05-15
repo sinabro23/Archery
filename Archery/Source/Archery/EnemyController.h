@@ -18,17 +18,19 @@ public:
 	AEnemyController();
 	virtual void OnPossess(APawn* InPawn) override;
 
+	static const FName HomePosKey;
+	static const FName PatrolPosKey;
+
 private:
 	/** Blackboard component for this enemy */
 	UPROPERTY(BlueprintReadWrite, Category = "AI Behavior", meta = (AllowPrivateAccess = "true"))
-		class UBlackboardComponent* BlackboardComponent;
+	class UBlackboardComponent* BlackboardComponent;
 
 	/** Behavior tree component for this enemy */
 	UPROPERTY(BlueprintReadWrite, Category = "AI Behavior", meta = (AllowPrivateAccess = "true"))
-		class UBehaviorTreeComponent* BehaviorTreeComponent;
+	class UBehaviorTreeComponent* BehaviorTreeComponent;
 
 
 public:
-
 	FORCEINLINE UBlackboardComponent* GetBlackboardComponent() const { return BlackboardComponent; }
 };

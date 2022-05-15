@@ -7,6 +7,9 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "Enemy.h"
 
+const FName AEnemyController::HomePosKey(TEXT("HomePos"));
+const FName AEnemyController::PatrolPosKey(TEXT("PatrolPos"));
+
 AEnemyController::AEnemyController()
 {
 	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComponent"));
@@ -31,4 +34,5 @@ void AEnemyController::OnPossess(APawn* InPawn)
 		}
 	}
 }
+
 

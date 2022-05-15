@@ -857,7 +857,7 @@ void AMainCharacter::SetHP(float NewHP)
 
 	if(NewHP > MaxHP)
 	{
-		NewHP = MaxHP;
+		CurrentHP = MaxHP;
 	}
 
 	if (CurrentHP < 0.f)
@@ -875,6 +875,16 @@ float AMainCharacter::GetCurrentHP()
 void AMainCharacter::SetMP(float NewMP)
 {
 	CurrentMP = NewMP;
+
+	if (NewMP > MaxMP)
+	{
+		CurrentMP = MaxHP;
+	}
+
+	if (CurrentMP < 0.f)
+	{
+		CurrentMP = 0.f;
+	}
 }
 
 float AMainCharacter::GetCurrentMP()
@@ -904,7 +914,7 @@ void AMainCharacter::DrinkHPPotion()
 
 	HPPotionCount--;
 	IsDrinkingHPPotion = true;
-	GetWorldTimerManager().SetTimer(HPPotionTimer, this, &AMainCharacter::EndHPHealing, 0.5f);
+	GetWorldTimerManager().SetTimer(HPPotionTimer, this, &AMainCharacter::EndHPHealing, 1.f);
 	//SetHP(CurrentHP + HPPotionHealAmount);
 }
 
@@ -915,7 +925,7 @@ void AMainCharacter::DrinkMPPtion()
 
 	MPPotionCount--;
 	IsDrinkingMPPotion = true;
-	GetWorldTimerManager().SetTimer(MPPotionTimer, this, &AMainCharacter::EndMPHealing, 0.5f);
+	GetWorldTimerManager().SetTimer(MPPotionTimer, this, &AMainCharacter::EndMPHealing, 1.f);
 }
 
 void AMainCharacter::OneKeyPressed()
@@ -991,18 +1001,22 @@ void AMainCharacter::EkeyPressed()
 void AMainCharacter::EndHPHealing()
 {
 	IsDrinkingHPPotion = false;
+	if (CurrentHP > 100.f)
+		CurrentHP = 100.f;
 }
 
 void AMainCharacter::EndMPHealing()
 {
 	IsDrinkingMPPotion = false;
+	if (CurrentMP > 100.f)
+		CurrentMP = 100.f;
 }
 
 void AMainCharacter::FireShieldOn()
 {
 	if (IsShieldOn)
 		return;
-
+	FireShieldParticle->SetActive(true, true);
 	IsShieldOn = true;
 	CharacterState = ECharacterState::ECS_Shield;
 	FireShieldParticle->SetHiddenInGame(false);
@@ -1121,6 +1135,18 @@ void AMainCharacter::CurrentMPCheck()
 	default:
 		break;
 	}
+}
+
+void AMainCharacter::OnHealingSpot()
+{
+	IsDrinkingHPPotion = true;
+	IsDrinkingMPPotion = true;
+}
+
+void AMainCharacter::OutHealingSpot()
+{
+	IsDrinkingHPPotion = false;
+	IsDrinkingMPPotion = false;
 }
 
 

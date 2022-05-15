@@ -217,16 +217,18 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	int32 CurrentCoinCount = 1000;
 
+	UPROPERTY(VisibleAnywhere)
 	bool IsDrinkingHPPotion = false;
+	UPROPERTY(VisibleAnywhere)
 	bool IsDrinkingMPPotion = false;
 
 	FTimerHandle HPPotionTimer;
 	FTimerHandle MPPotionTimer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
-	float HPPotionHealAmount = 30.f;
+	float HPPotionHealAmount = 50.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
-	float MPPotionHealAmount = 100.f;
+	float MPPotionHealAmount = 50.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	float MeteorMPAMount = 20.f;
@@ -330,6 +332,9 @@ public:
 	void TapKeyPressed();
 
 	void CurrentMPCheck();
+
+	void OnHealingSpot();
+	void OutHealingSpot();
 public:
 
 	FORCEINLINE FVector GetBlackholePosition() { return BlackholePosition; };
