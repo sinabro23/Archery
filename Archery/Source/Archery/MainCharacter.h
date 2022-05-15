@@ -215,7 +215,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	int32 MPPotionCount = 5;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-	int32 CurrentCoinCount = 1000;
+	int32 CurrentCoinCount = 12000;
 
 	UPROPERTY(VisibleAnywhere)
 	bool IsDrinkingHPPotion = false;
@@ -245,6 +245,11 @@ private:
 	int32 MeteorCount = 0;
 
 	bool IsTapOn = false;
+
+	bool IsOnGate = false;
+
+	class ARoomGate* GateRoom = nullptr;
+
 public:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -335,6 +340,12 @@ public:
 
 	void OnHealingSpot();
 	void OutHealingSpot();
+
+	void SetIsOnGate(bool bIsOn);
+
+	void FKeyPressed();
+
+	void SetRoomGate(ARoomGate* RoomGate);
 public:
 
 	FORCEINLINE FVector GetBlackholePosition() { return BlackholePosition; };

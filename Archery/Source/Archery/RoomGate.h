@@ -40,6 +40,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gate", Meta = (AllowPrivateAccess = "true"))
 	bool IsCharacterOn = false;
 
+	bool IsGateOn = false;
+
+	FTimerHandle GateTimerHandle;
+	float GateDisappearTime = 5.f;
 public:
 	UFUNCTION()
 	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -52,4 +56,13 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void HideWidget();
+
+	void PutCurrentCoin(int32 CoinAmountToPut);
+
+	void OpenGate();
+
+	void DestroyThis();
+
+	int32 GetCurrentCoinAmount();
+	int32 GetMaxCoinAmount();
 };

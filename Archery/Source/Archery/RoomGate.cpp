@@ -27,7 +27,7 @@ ARoomGate::ARoomGate()
 void ARoomGate::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	HideWidget();
 }
 
 void ARoomGate::PostInitializeComponents()
@@ -42,6 +42,11 @@ void ARoomGate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsGateOn)
+	{
+		SetActorRotation(GetActorRotation() += FRotator(0.0f, 200.f * DeltaTime, 0.f));
+		SetActorLocation(GetActorLocation() += FVector(0.0f, 0.0f, -200.f * DeltaTime));
+	}
 }
 
 void ARoomGate::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -55,7 +60,12 @@ void ARoomGate::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 		IsCharacterOn = true;
 		UE_LOG(LogTemp, Warning, TEXT("Overlapped"));
 		
-		ShowWidget();
+		if (!IsGateOn)
+		{
+			ShowWidget();
+		}
+		MainCharacter->SetIsOnGate(true);
+		MainCharacter->SetRoomGate(this);
 	}
 	
 }
@@ -72,6 +82,41 @@ void ARoomGate::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		UE_LOG(LogTemp, Warning, TEXT("End Overlap"));
 
 		HideWidget();
+		MainCharacter->SetIsOnGate(false);
+		MainCharacter->SetRoomGate(nullptr);
 	}
+}
+
+void ARoomGate::PutCurrentCoin(int32 CoinAmountToPut)
+{
+	CurrentCoinAmount += CoinAmountToPut;
+	if (CurrentCoinAmount >= MaxCoinAmount)
+	{
+		OpenGate();
+		CurrentCoinAmount = MaxCoinAmount;
+		HideWidget();
+		return;
+	}
+}
+
+void ARoomGate::OpenGate()
+{
+	IsGateOn = true;
+	GetWorldTimerManager().SetTimer(GateTimerHandle, this, &ARoomGate::DestroyThis, GateDisappearTime);
+}
+
+void ARoomGate::DestroyThis()
+{
+	Destroy();
+}
+
+int32 ARoomGate::GetCurrentCoinAmount()
+{
+	return CurrentCoinAmount;
+}
+
+int32 ARoomGate::GetMaxCoinAmount()
+{
+	return MaxCoinAmount;
 }
 

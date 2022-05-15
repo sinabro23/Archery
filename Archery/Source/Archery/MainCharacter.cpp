@@ -15,7 +15,7 @@
 #include "MainPlayerController.h"
 #include "Enemy.h"
 #include "Components/CapsuleComponent.h"
-
+#include "RoomGate.h"
 // Sets default values
 AMainCharacter::AMainCharacter()
 {
@@ -186,6 +186,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAction("FireButton", IE_Pressed, this, &AMainCharacter::FireWeapon);
 	PlayerInputComponent->BindAction("NextSkill", IE_Pressed, this, &AMainCharacter::SkillChange);
+	PlayerInputComponent->BindAction("FKey", IE_Pressed, this, &AMainCharacter::FKeyPressed);
 
 	PlayerInputComponent->BindAction("Tap", EInputEvent::IE_Pressed, this, &AMainCharacter::TapKeyPressed);
 }
@@ -1147,6 +1148,39 @@ void AMainCharacter::OutHealingSpot()
 {
 	IsDrinkingHPPotion = false;
 	IsDrinkingMPPotion = false;
+}
+
+void AMainCharacter::SetIsOnGate(bool bIsOn)
+{
+	IsOnGate = bIsOn;
+}
+
+void AMainCharacter::FKeyPressed()
+{
+	UE_LOG(LogTemp, Warning, TEXT("FKEY"));
+	if (IsOnGate)
+	{
+		if (GateRoom)
+		{
+			int32 RemainCoinAmount = GateRoom->GetMaxCoinAmount() - GateRoom->GetCurrentCoinAmount();
+			if (RemainCoinAmount >= CurrentCoinCount)
+			{
+				GateRoom->PutCurrentCoin(CurrentCoinCount);
+				CurrentCoinCount = 0;
+			}
+			else
+			{
+				GateRoom->PutCurrentCoin(RemainCoinAmount);
+				CurrentCoinCount -= RemainCoinAmount;
+			}
+			
+		}
+	}
+}
+
+void AMainCharacter::SetRoomGate(ARoomGate* RoomGate)
+{
+	GateRoom = RoomGate;
 }
 
 
