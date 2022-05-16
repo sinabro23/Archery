@@ -942,6 +942,7 @@ void AMainCharacter::OneKeyPressed()
 		return;
 
 	CurrentSkill = ECharacterSkill::ECS_Burden;
+	CurrentSkillName = FName("FireBall");
 	TapKeyPressed();
 }
 
@@ -951,6 +952,7 @@ void AMainCharacter::TwoKeyPressed()
 		return;
 
 	CurrentSkill = ECharacterSkill::ECS_Meteor;
+	CurrentSkillName = FName("Meteor");
 	TapKeyPressed();
 }
 
@@ -960,6 +962,7 @@ void AMainCharacter::ThreeKeyPressed()
 		return;
 
 	CurrentSkill = ECharacterSkill::ECS_FireShield;
+	CurrentSkillName = FName("FireShield");
 	TapKeyPressed();
 }
 
@@ -969,6 +972,7 @@ void AMainCharacter::FourKeyPressed()
 		return;
 
 	CurrentSkill = ECharacterSkill::ECS_BlackHole;
+	CurrentSkillName = FName("BlackHole");
 	TapKeyPressed();
 }
 

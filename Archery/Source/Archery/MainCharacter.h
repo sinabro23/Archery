@@ -217,7 +217,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	int32 MPPotionCount = 5;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-	int32 CurrentCoinCount = 10000;
+	int32 CurrentCoinCount = 0;
 
 	UPROPERTY(VisibleAnywhere)
 	bool IsDrinkingHPPotion = false;

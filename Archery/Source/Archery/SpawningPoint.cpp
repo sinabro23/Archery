@@ -43,15 +43,6 @@ void ASpawningPoint::BeginPlay()
 	BeforeRandVector = GetActorLocation() + FVector(0.0f, 0.0f, 100.f);
 	RandVector = GetActorLocation() + FVector(0.0f, 0.0f, 100.f);
 	DefaultZHeight = GetActorLocation().Z;
-
-	SpawnPoint1 = UKismetMathLibrary::TransformLocation(GetActorTransform(), SpawnPoint1);
-	SpawnPoint2 = UKismetMathLibrary::TransformLocation(GetActorTransform(), SpawnPoint2);
-	SpawnPoint3 = UKismetMathLibrary::TransformLocation(GetActorTransform(), SpawnPoint3);
-	SpawnPoint4 = UKismetMathLibrary::TransformLocation(GetActorTransform(), SpawnPoint4);
-	SpawnPoint5 = UKismetMathLibrary::TransformLocation(GetActorTransform(), SpawnPoint5);
-	SpawnPoint6 = UKismetMathLibrary::TransformLocation(GetActorTransform(), SpawnPoint6);
-
-	EnemySpawn();
 }
 
 void ASpawningPoint::PostInitializeComponents()
