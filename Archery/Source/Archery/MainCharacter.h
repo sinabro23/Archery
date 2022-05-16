@@ -217,7 +217,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	int32 MPPotionCount = 5;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-	int32 CurrentCoinCount = 0;
+	int32 CurrentCoinCount = 10000;
 
 	UPROPERTY(VisibleAnywhere)
 	bool IsDrinkingHPPotion = false;
@@ -251,6 +251,14 @@ private:
 	bool IsOnGate = false;
 
 	class ARoomGate* GateRoom = nullptr;
+
+	FTimerHandle DieTimerHandle;
+	float DieTime = 4.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	bool IsGameEnd = false;
+
+	bool IsOnSpawnButton = false;
 
 public:
 	void MoveForward(float Value);
@@ -348,8 +356,16 @@ public:
 	void FKeyPressed();
 
 	void SetRoomGate(ARoomGate* RoomGate);
-public:
 
+	void RestartLevel();
+
+	class AMainPlayerController* GetMainPlayerController();
+	
+	class ASpawningPoint* SpawnPoint = nullptr;
+
+public:
 	FORCEINLINE FVector GetBlackholePosition() { return BlackholePosition; };
+	FORCEINLINE void SetIsGameEnd(bool bIsEnd) { IsGameEnd = bIsEnd; }
+	FORCEINLINE void SetIsOnSpawnButton(bool bIsEnd, ASpawningPoint* _SpawnPoint) { IsOnSpawnButton = bIsEnd;  SpawnPoint = _SpawnPoint;}
 
 };

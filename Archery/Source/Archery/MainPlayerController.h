@@ -43,6 +43,12 @@ public:
 	UPROPERTY()
 	class UUserWidget* TapHUDOverlay;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
+	TSubclassOf<class UUserWidget> EndingHUDOverlayAsset;
+
+	UPROPERTY()
+	class UUserWidget* EndingHUDOverlay;
+
 private:
 	bool IsTapOn = false;
 public:
@@ -50,4 +56,6 @@ public:
 	void SetWidgetVisiblity(bool Visible);
 
 	void SetTapHUDVisibility(bool Visible);
+
+	void SetEndingHUDVisibility(bool Visible);
 };

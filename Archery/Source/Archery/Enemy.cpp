@@ -18,6 +18,9 @@
 #include "HPPotion.h"
 #include "MPPotion.h"
 #include "Coin.h"
+#include "NavigationSystem.h"
+
+int32 AEnemy::EnemiesCounts = 0;
 
 // Sets default values
 AEnemy::AEnemy()
@@ -47,13 +50,14 @@ AEnemy::AEnemy()
 		StunParticle->SetTemplate(PS_STUN.Object);
 	}
 
-	
 }
 
 // Called when the game starts or when spawned
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	EnemiesCounts++;
 
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
@@ -64,15 +68,34 @@ void AEnemy::BeginPlay()
 	// 패트롤포인트를 월드포지션으로 넣기
 	const FVector WorldPatrolPoint = UKismetMathLibrary::TransformLocation(GetActorTransform(), PatrolPoint);
 	const FVector WorldPatrolPoint2 = UKismetMathLibrary::TransformLocation(GetActorTransform(), PatrolPoint2);
-	//DrawDebugSphere(GetWorld(), WorldPatrolPoint, 25.f, 12, FColor::Red, true);
 	//DrawDebugSphere(GetWorld(), WorldPatrolPoint2, 25.f, 12, FColor::Red, true);
 
 	EnemyController = Cast<AEnemyController>(GetController());
 
 	if (EnemyController)
 	{
-		EnemyController->GetBlackboardComponent()->SetValueAsVector(TEXT("PatrolPoint"), WorldPatrolPoint);
-		EnemyController->GetBlackboardComponent()->SetValueAsVector(TEXT("PatrolPoint2"), WorldPatrolPoint2);
+		UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+		if (NavSystem)
+		{
+			FVector Origin = GetActorLocation();
+			FNavLocation NextPatrolLocation;
+			FNavLocation NextPatrolLocation2;
+
+			if (NavSystem->GetRandomPointInNavigableRadius(Origin, 50.f, NextPatrolLocation))
+			{
+				PatrolPoint = NextPatrolLocation.Location;
+				PatrolPoint.Z = 0.f;
+			}
+
+			if (NavSystem->GetRandomPointInNavigableRadius(Origin, 1000.f, NextPatrolLocation2))
+			{
+				PatrolPoint2 = NextPatrolLocation2.Location;
+				PatrolPoint2.Z = 0.f;
+			}
+
+			EnemyController->GetBlackboardComponent()->SetValueAsVector(TEXT("PatrolPoint"), NextPatrolLocation);
+			EnemyController->GetBlackboardComponent()->SetValueAsVector(TEXT("PatrolPoint2"), NextPatrolLocation2);
+		}
 		EnemyController->GetBlackboardComponent()->SetValueAsBool(FName("CanAttack"), true);
 
 		EnemyController->RunBehaviorTree(BehaviorTree);
@@ -101,7 +124,9 @@ void AEnemy::Tick(float DeltaTime)
 	}
 
 	DraggedToBlackhole(DeltaTime);
-
+	
+	if (EnemiesCounts == 0)
+		AnounceEnemiesZero();
 }
 
 // Called to bind functionality to input
@@ -232,6 +257,9 @@ void AEnemy::Die()
 	bDying = true;
 	bStunned = false;
 
+	EnemiesCounts--;
+
+	SetActorEnableCollision(false);
 	HideHealthBar();
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -279,7 +307,11 @@ void AEnemy::AgroSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	if (Character)
 	{
 		// Set the value of the Target Blackboard Key
-		EnemyController->GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), Character);
+		if (EnemyController)
+		{
+			EnemyController->GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), Character);
+		}
+		
 	}
 }
 
@@ -291,6 +323,11 @@ void AEnemy::SetStunned(bool Stunned)
 	{
 		EnemyController->GetBlackboardComponent()->SetValueAsBool(TEXT("Stunned"), Stunned);
 	}
+}
+
+void AEnemy::AnounceEnemiesZero()
+{
+	OnEnemiesZero.Broadcast();
 }
 
 void AEnemy::CombatRangeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -310,6 +347,7 @@ void AEnemy::CombatRangeOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 		}
 	}
 }
+
 
 void AEnemy::CombatRangeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
@@ -482,7 +520,10 @@ void AEnemy::DropItem()
 	{
 		ACoin* Coin = GetWorld()->SpawnActor<ACoin>(DropLocation + FVector(0.0f,0.0f, 15.f), FRotator::ZeroRotator);
 		int32 CoinAmount = FMath::FRandRange(1000, 1500);
-		Coin->SetCoinAmount(CoinAmount);
+		if (Coin)
+		{
+			Coin->SetCoinAmount(CoinAmount);
+		}
 	}
 	else
 	{

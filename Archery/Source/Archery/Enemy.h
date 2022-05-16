@@ -7,6 +7,7 @@
 #include "Enemy.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnHPChanged);
+DECLARE_MULTICAST_DELEGATE(FOnEnemiesZero);
 
 UCLASS()
 class ARCHERY_API AEnemy : public ACharacter
@@ -16,6 +17,8 @@ class ARCHERY_API AEnemy : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AEnemy();
+
+	static int32 EnemiesCounts;
 
 protected:
 	// Called when the game starts or when spawned
@@ -144,6 +147,8 @@ private:
 
 	float BlackholeDamage = 0.f;
 
+
+
 public:
 	void OnAttacked(float DamageAmount, class AMainCharacter* MainCharacter);
 	void OnAttackedBlackhole(float DamageAmount, AMainCharacter* MainCharacter);
@@ -173,6 +178,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetStunned(bool Stunned);
+
+	UFUNCTION(BlueprintCallable)
+	void AnounceEnemiesZero();
 
 	UFUNCTION()
 	void CombatRangeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -216,10 +224,12 @@ public:
 	void DropItem();
 	bool ShouldHappenInPercent(int32 Percentage);
 
+	
 public:
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
+	FORCEINLINE static int32 GetEnemiesCount() { return EnemiesCounts; };
 
 public:
 	FOnHPChanged OnHPChanged;
-	
+	FOnEnemiesZero OnEnemiesZero;
 };

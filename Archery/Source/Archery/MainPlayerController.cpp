@@ -47,6 +47,17 @@ void AMainPlayerController::BeginPlay()
 		TapHUDOverlay->SetVisibility(ESlateVisibility::Hidden);
 	}
 
+	if (EndingHUDOverlayAsset)
+	{
+		EndingHUDOverlay = CreateWidget<UUserWidget>(this, EndingHUDOverlayAsset);
+	}
+
+	if (TapHUDOverlay)
+	{
+		EndingHUDOverlay->AddToViewport();
+		EndingHUDOverlay->SetVisibility(ESlateVisibility::Hidden);
+	}
+
 	MainCharacter = Cast<AMainCharacter>(GetOwner());
 }
 
@@ -78,6 +89,18 @@ void AMainPlayerController::SetTapHUDVisibility(bool Visible)
 	else
 	{
 		TapHUDOverlay->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void AMainPlayerController::SetEndingHUDVisibility(bool Visible)
+{
+	if (Visible == true)
+	{
+		EndingHUDOverlay->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		EndingHUDOverlay->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 

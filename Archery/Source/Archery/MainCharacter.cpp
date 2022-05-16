@@ -16,6 +16,8 @@
 #include "Enemy.h"
 #include "Components/CapsuleComponent.h"
 #include "RoomGate.h"
+#include "SpawningPoint.h"
+
 // Sets default values
 AMainCharacter::AMainCharacter()
 {
@@ -96,7 +98,7 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 {
 	if (IsShieldOn)
 	{
-		float DamageAmoutOnShield = DamageAmount / 2.f;
+		float DamageAmoutOnShield = DamageAmount / 10.f;
 		if (CurrentHP - DamageAmoutOnShield <= 0.f)
 		{
 			CurrentHP = 0.f;
@@ -161,6 +163,8 @@ void AMainCharacter::Tick(float DeltaTime)
 
 	CurrentMPCheck();
 	
+	AEnemy::EnemiesCounts;
+	int a = 3;
 }
 
 // Called to bind functionality to input
@@ -670,6 +674,7 @@ void AMainCharacter::MeteorAttackCheck()
 
 void AMainCharacter::Die()
 {
+
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && DeathMontage)
 	{
@@ -677,18 +682,20 @@ void AMainCharacter::Die()
 		AnimInstance->Montage_JumpToSection(FName("Death"), DeathMontage);
 	}
 
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-}
-
-void AMainCharacter::FinishDeath()
-{
-	GetMesh()->bPauseAnims = true;
-
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
 	if (PC)
 	{
 		DisableInput(PC);
 	}
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	GetWorldTimerManager().SetTimer(DieTimerHandle, this, &AMainCharacter::RestartLevel, DieTime);
+}
+
+void AMainCharacter::FinishDeath()
+{
+	GetMesh()->bPauseAnims = true;
 }
 
 void AMainCharacter::BurdenButtonPressed()
@@ -1173,14 +1180,35 @@ void AMainCharacter::FKeyPressed()
 				GateRoom->PutCurrentCoin(RemainCoinAmount);
 				CurrentCoinCount -= RemainCoinAmount;
 			}
-			
 		}
+	}
+
+	if (IsOnSpawnButton)
+	{
+		if (SpawnPoint)
+		{
+			SpawnPoint->PressButton();
+		}
+		
 	}
 }
 
 void AMainCharacter::SetRoomGate(ARoomGate* RoomGate)
 {
 	GateRoom = RoomGate;
+}
+
+void AMainCharacter::RestartLevel()
+{
+	if (MainPlayerController)
+	{
+		MainPlayerController->RestartLevel();
+	}
+}
+
+AMainPlayerController* AMainCharacter::GetMainPlayerController()
+{
+	return MainPlayerController;
 }
 
 
