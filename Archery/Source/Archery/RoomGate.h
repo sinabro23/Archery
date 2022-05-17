@@ -44,6 +44,10 @@ private:
 
 	FTimerHandle GateTimerHandle;
 	float GateDisappearTime = 5.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sound, Meta = (AllowPrivateAccess = true))
+	class USoundCue* GateOpenSound;
+
 public:
 	UFUNCTION()
 	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

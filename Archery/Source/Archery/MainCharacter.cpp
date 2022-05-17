@@ -491,6 +491,11 @@ void AMainCharacter::SendMeteor()
 		MainPlayerController->SetWidgetVisiblity(false);
 	}
 
+	if (MeteorSound)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), MeteorSound);
+	}
+
 	/////
 	MeteorAttackCheck();
 	GetWorldTimerManager().SetTimer(MeteorTimer, this, &AMainCharacter::MeteorRepeat, MeteorTime);
@@ -821,6 +826,12 @@ void AMainCharacter::SendBlackhole()
 	}
 
 	SetMP(CurrentMP - BlackholeMPAMount);
+
+	if (BlackholeSound)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), BlackholeSound);
+	}
+
 	BlackholeAttackCheck();
 }
 
@@ -902,16 +913,19 @@ float AMainCharacter::GetCurrentMP()
 
 void AMainCharacter::TakeHPPotion()
 {
+	UGameplayStatics::PlaySound2D(GetWorld(), TakeItemSound);
 	HPPotionCount += 1;
 }
 
 void AMainCharacter::TakeMPPotion()
 {
+	UGameplayStatics::PlaySound2D(GetWorld(), TakeItemSound);
 	MPPotionCount += 1;
 }
 
 void AMainCharacter::TakeCoin(int32 CoinAmount)
 {
+	UGameplayStatics::PlaySound2D(GetWorld(), TakeCoinSound);
 	CurrentCoinCount += CoinAmount;
 }
 
@@ -1096,6 +1110,8 @@ void AMainCharacter::TapKeyPressed()
 		IsTapOn = true;
 		MainPlayerController->SetTapHUDVisibility(true);
 	}
+
+	UGameplayStatics::PlaySound2D(GetWorld(), TapSound);
 }
 
 void AMainCharacter::CurrentMPCheck()

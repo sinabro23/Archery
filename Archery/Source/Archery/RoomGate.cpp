@@ -4,6 +4,8 @@
 #include "RoomGate.h"
 #include "Components/SphereComponent.h"
 #include "MainCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values
 ARoomGate::ARoomGate()
@@ -103,6 +105,9 @@ void ARoomGate::OpenGate()
 {
 	IsGateOn = true;
 	GetWorldTimerManager().SetTimer(GateTimerHandle, this, &ARoomGate::DestroyThis, GateDisappearTime);
+
+	UGameplayStatics::PlaySound2D(GetWorld(), GateOpenSound);
+	
 }
 
 void ARoomGate::DestroyThis()
