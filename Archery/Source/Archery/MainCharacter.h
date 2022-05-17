@@ -242,6 +242,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UParticleSystemComponent* FireShieldParticle = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UParticleSystemComponent* PotionParticle = nullptr;
+
 	FTimerHandle MeteorTimer;
 	float MeteorTime = 0.3f;
 	int32 MeteorCount = 0;
@@ -274,6 +277,14 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sound, Meta = (AllowPrivateAccess = true))
 	USoundCue* MeteorSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sound, Meta = (AllowPrivateAccess = true))
+	USoundCue* DrinkPotionSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sound, Meta = (AllowPrivateAccess = true))
+	USoundCue* FireShieldSound;
+
+	UAudioComponent* AudioComponent = nullptr;
 
 public:
 	void MoveForward(float Value);

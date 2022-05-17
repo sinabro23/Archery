@@ -4,10 +4,16 @@
 #include "MainPlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "MainCharacter.h"
+#include "Sound/SoundCue.h"
+#include "Kismet/GameplayStatics.h"
 
 AMainPlayerController::AMainPlayerController()
 {
-
+	static ConstructorHelpers::FObjectFinder<USoundCue> SC_BGM(TEXT("SoundCue'/Game/_Game/Assets/Sounds/BGM/battle-of-the-dragons-8037_Cue.battle-of-the-dragons-8037_Cue'"));
+	if (SC_BGM.Succeeded())
+	{
+		BGMSound = SC_BGM.Object;
+	}
 }
 
 void AMainPlayerController::BeginPlay()
@@ -59,6 +65,11 @@ void AMainPlayerController::BeginPlay()
 	}
 
 	MainCharacter = Cast<AMainCharacter>(GetOwner());
+
+	if (BGMSound)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), BGMSound);
+	}
 }
 
 void AMainPlayerController::SetupInputComponent()

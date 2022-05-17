@@ -49,6 +49,9 @@ void AEndingPoint::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent
 		{
 			Maincharacter->GetMainPlayerController()->SetPause(true);
 			Maincharacter->GetMainPlayerController()->SetEndingHUDVisibility(true);
+			FInputModeUIOnly UIInputMode;
+			Maincharacter->GetMainPlayerController()->SetInputMode(UIInputMode);
+			Maincharacter->GetMainPlayerController()->bShowMouseCursor = true;
 			Maincharacter->SetIsGameEnd(true);
 		}
 	}

@@ -17,6 +17,7 @@
 #include "Components/CapsuleComponent.h"
 #include "RoomGate.h"
 #include "SpawningPoint.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -84,6 +85,19 @@ AMainCharacter::AMainCharacter()
 	{
 		FireShieldParticle->SetTemplate(PS_FireShield.Object);
 	}
+
+	PotionParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("PotionParticle"));
+	PotionParticle->SetupAttachment(GetRootComponent());
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_POTION(TEXT("ParticleSystem'/Game/RPGEffects/Particles/P_Priest_Heal_Over_Time_3D.P_Priest_Heal_Over_Time_3D'"));
+	if (PS_POTION.Succeeded())
+	{
+		PotionParticle->SetTemplate(PS_POTION.Object);
+	}
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+
+
 }
 
 // Called when the game starts or when spawned
@@ -92,6 +106,7 @@ void AMainCharacter::BeginPlay()
 	Super::BeginPlay();
 	MainPlayerController = Cast<AMainPlayerController>(GetController());
 	FireShieldParticle->SetHiddenInGame(true);
+	PotionParticle->SetHiddenInGame(true);
 }
 
 float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -142,14 +157,20 @@ void AMainCharacter::Tick(float DeltaTime)
 		CurrentCastingTime = GetWorldTimerManager().GetTimerElapsed(ESkillTimer);
 	}
 
+	PotionParticle->SetHiddenInGame(true);
+
 	if (IsDrinkingHPPotion)
 	{
 		SetHP(CurrentHP += DeltaTime * HPPotionHealAmount);
+		PotionParticle->SetActive(true);
+		PotionParticle->SetHiddenInGame(false);
 	}
 
 	if (IsDrinkingMPPotion)
 	{
 		SetMP(CurrentMP += DeltaTime * MPPotionHealAmount);
+		PotionParticle->SetActive(true);
+		PotionParticle->SetHiddenInGame(false);
 	}
 	
 	if (IsShieldOn)
@@ -161,10 +182,9 @@ void AMainCharacter::Tick(float DeltaTime)
 		}
 	}
 
+	
 	CurrentMPCheck();
 	
-	AEnemy::EnemiesCounts;
-	int a = 3;
 }
 
 // Called to bind functionality to input
@@ -1009,6 +1029,11 @@ void AMainCharacter::QKeyPressed()
 
 void AMainCharacter::EkeyPressed()
 {
+	if (DrinkPotionSound)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), DrinkPotionSound);
+	}
+
 	switch (CurrentItem)
 	{
 	case ECharacterItem::ECI_HPPotion:
@@ -1029,6 +1054,8 @@ void AMainCharacter::EndHPHealing()
 	IsDrinkingHPPotion = false;
 	if (CurrentHP > 100.f)
 		CurrentHP = 100.f;
+
+	PotionParticle->SetHiddenInGame(true);
 }
 
 void AMainCharacter::EndMPHealing()
@@ -1036,6 +1063,8 @@ void AMainCharacter::EndMPHealing()
 	IsDrinkingMPPotion = false;
 	if (CurrentMP > 100.f)
 		CurrentMP = 100.f;
+
+	PotionParticle->SetHiddenInGame(true);
 }
 
 void AMainCharacter::FireShieldOn()
@@ -1046,6 +1075,12 @@ void AMainCharacter::FireShieldOn()
 	IsShieldOn = true;
 	CharacterState = ECharacterState::ECS_Shield;
 	FireShieldParticle->SetHiddenInGame(false);
+
+	if (FireShieldSound)
+	{
+		AudioComponent = UGameplayStatics::SpawnSound2D(this, FireShieldSound);
+		AudioComponent->SetActive(true);
+	}
 	
 }
 
@@ -1054,6 +1089,10 @@ void AMainCharacter::FireShieldOff()
 	IsShieldOn = false;
 	CharacterState = ECharacterState::ECS_Normal;
 	FireShieldParticle->SetHiddenInGame(true);
+	if (FireShieldSound)
+	{
+		AudioComponent->SetActive(false);
+	}
 }
 
 void AMainCharacter::MeteorRepeat()

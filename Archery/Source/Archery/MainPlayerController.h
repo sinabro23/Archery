@@ -50,7 +50,11 @@ public:
 	class UUserWidget* EndingHUDOverlay;
 
 private:
+
 	bool IsTapOn = false;
+
+	class USoundCue* BGMSound;
+
 public:
 	
 	void SetWidgetVisiblity(bool Visible);
