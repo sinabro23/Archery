@@ -123,7 +123,7 @@ void AEnemy::Tick(float DeltaTime)
 		StunParticle->SetActive(false);
 	}
 
-	DraggedToBlackhole(DeltaTime);
+	DraggedByBlackhole(DeltaTime);
 	
 	if (EnemiesCounts == 0)
 		AnounceEnemiesZero();
@@ -500,7 +500,7 @@ void AEnemy::BlackholeRepeat()
 	}
 }
 
-void AEnemy::DraggedToBlackhole(float DeltaTime)
+void AEnemy::DraggedByBlackhole(float DeltaTime)
 {
 	if (bIsOnBlackhole)
 	{
@@ -512,33 +512,53 @@ void AEnemy::DraggedToBlackhole(float DeltaTime)
 	}
 }
 
+bool AEnemy::ShouldHappenInPercent(int32 Percentage)
+{
+	return (FMath::RandRange(1, 100 / Percentage) == 1 ? true : false);
+}
+
 void AEnemy::DropItem()
 {
-	FVector DropLocation = GetActorLocation() + (-1.f * GetActorUpVector()) * GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-
+	// 50 퍼센트는 코인을 드랍
 	if (ShouldHappenInPercent(50))
 	{
-		ACoin* Coin = GetWorld()->SpawnActor<ACoin>(DropLocation + FVector(0.0f,0.0f, 15.f), FRotator::ZeroRotator);
-		int32 CoinAmount = FMath::FRandRange(1000, 1500);
-		if (Coin)
-		{
-			Coin->SetCoinAmount(CoinAmount);
-		}
+		SpawnCoin();
 	}
 	else
 	{
+		// 나머지 50퍼센트 드랍은 포션드랍
 		if (ShouldHappenInPercent(50))
 		{
-			GetWorld()->SpawnActor<AHPPotion>(DropLocation, FRotator::ZeroRotator);
+			// 25퍼센트는 HPPotion 드랍
+			SpawnHPPotion();
 		}
 		else
-		{
-			GetWorld()->SpawnActor<AMPPotion>(DropLocation, FRotator::ZeroRotator);
+		{	// 25퍼센트는 MPPotion 드랍
+			SpawnMPPotion();
 		}
 	}
 }
 
-bool AEnemy::ShouldHappenInPercent(int32 Percentage)
+
+void AEnemy::SpawnHPPotion()
 {
-	return (FMath::RandRange(1, 100 / Percentage) == 1 ? true : false);
+	FVector DropLocation = GetActorLocation() + (-1.f * GetActorUpVector()) * GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	GetWorld()->SpawnActor<AHPPotion>(DropLocation, FRotator::ZeroRotator);
+}
+
+void AEnemy::SpawnMPPotion()
+{
+	FVector DropLocation = GetActorLocation() + (-1.f * GetActorUpVector()) * GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	GetWorld()->SpawnActor<AMPPotion>(DropLocation, FRotator::ZeroRotator);
+}
+
+void AEnemy::SpawnCoin()
+{
+	FVector DropLocation = GetActorLocation() + (-1.f * GetActorUpVector()) * GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	ACoin* Coin = GetWorld()->SpawnActor<ACoin>(DropLocation + FVector(0.0f, 0.0f, 15.f), FRotator::ZeroRotator);
+	int32 CoinAmount = FMath::FRandRange(1000, 1500);
+	if (Coin)
+	{
+		Coin->SetCoinAmount(CoinAmount);
+	}
 }

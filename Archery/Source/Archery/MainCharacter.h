@@ -217,7 +217,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	int32 MPPotionCount = 5;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-	int32 CurrentCoinCount = 10000;
+	int32 CurrentCoinCount = 0;
 
 	UPROPERTY(VisibleAnywhere)
 	bool IsDrinkingHPPotion = false;
@@ -263,6 +263,8 @@ private:
 
 	bool IsOnSpawnButton = false;
 
+	float FireballRange = 50000.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sound, Meta = (AllowPrivateAccess = true))
 	class USoundCue* TapSound;
 
@@ -285,6 +287,8 @@ private:
 	USoundCue* FireShieldSound;
 
 	UAudioComponent* AudioComponent = nullptr;
+
+	float BlackholeRange = 600.f;
 
 public:
 	void MoveForward(float Value);

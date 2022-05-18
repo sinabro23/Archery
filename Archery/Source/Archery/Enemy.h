@@ -220,10 +220,13 @@ public:
 	void DestroyEnemy();
 
 	void BlackholeRepeat();
-	void DraggedToBlackhole(float DeltaTime);
+	void DraggedByBlackhole(float DeltaTime);
 	void DropItem();
 	bool ShouldHappenInPercent(int32 Percentage);
 
+	void SpawnHPPotion();
+	void SpawnMPPotion();
+	void SpawnCoin();
 	
 public:
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }

@@ -62,6 +62,8 @@ public:
 	UFUNCTION()
 	void AnimNotify_BurdenFire();
 
+	void CalculateMovementOffset();
+
 public:
 	FOnSendFireBallDelegate OnSendFireBall;
 	FOnSendFireBallEndDelegate OnFireBallEnd;

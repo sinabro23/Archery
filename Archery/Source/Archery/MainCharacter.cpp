@@ -431,60 +431,57 @@ void AMainCharacter::RMBButtonReleased()
 
 void AMainCharacter::SendFireBall()
 {
-	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
-	if (BarrelSocket)
+	const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName("HandSocket");
+	if (HandSocket)
 	{
-		const FTransform SocketTransform = BarrelSocket->GetSocketTransform(GetMesh());
+		const FTransform HandSocketTransform = HandSocket->GetSocketTransform(GetMesh());
 
 		if (MuzzleFlash)
 		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, HandSocketTransform);
 		}
 
-		// Get current size of the viewport
+		// 현재 뷰포트의 사이즈 구하기.
 		FVector2D ViewportSize;
 		if (GEngine && GEngine->GameViewport)
 		{
 			GEngine->GameViewport->GetViewportSize(ViewportSize);
 		}
 
-		// Get screen space location of crosshairs
-		FVector2D CrosshairLocation(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
-		FVector CrosshairWorldPosition;
-		FVector CrosshairWorldDirection;
+		// 크로스헤어 위치 구하기.
+		FVector2D CrosshairLocation = FVector2D(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
+		// 크로스헤어 월드 포지션을 넣어줄 변수
+		FVector CrosshairPosition;
+		FVector CrosshairDirection;
 
-		// Get world position and direction of crosshairs
+		// 크로스헤어 위치의 2D화면 좌표를 3D월드 스페이스로 변환
 		bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
 			UGameplayStatics::GetPlayerController(this, 0),
 			CrosshairLocation,
-			CrosshairWorldPosition,
-			CrosshairWorldDirection);
+			CrosshairPosition,
+			CrosshairDirection);
 
-		if (bScreenToWorld) // was deprojection successful?
+		// 투영이 성공한다면
+		if (bScreenToWorld) 
 		{
-			FHitResult ScreenTraceHit;
-			const FVector Start = CrosshairWorldPosition;
-			const FVector End = CrosshairWorldPosition + CrosshairWorldDirection * 50'000.f;
+			FHitResult TraceHitResult;
+			const FVector StartVector	= CrosshairPosition;
+			// 크로스헤어로 부터 시작된 끝지점
+			const FVector EndVector		= CrosshairPosition + CrosshairDirection * FireballRange;
 
-			// Set beam end point to line trace end point
-			FVector BeamEndPoint = End;
+			// Fireball이 날라갈 최종 위치를 넣어줄 변수
+			FVector FinalEndPoint		= EndVector;
 
-			// Trace outward from crosshairs world location
-			GetWorld()->LineTraceSingleByChannel(
-				ScreenTraceHit,
-				Start,
-				End,
-				ECollisionChannel::ECC_Visibility);
-			if (ScreenTraceHit.bBlockingHit) // was there a trace hit?
+			// 크로스헤어로부터 무언가 부딪힌다면 그방향으로 향하게  위치값 구하기.
+			GetWorld()->LineTraceSingleByChannel(TraceHitResult, StartVector, EndVector, ECollisionChannel::ECC_Visibility);
+			if (TraceHitResult.bBlockingHit) 
 			{
 				// Beam end point is now trace hit location
-				BeamEndPoint = ScreenTraceHit.Location;
-				//DrawDebugLine(GetWorld(), Start, BeamEndPoint, FColor::Red, false, 2.f);
-				//DrawDebugPoint(GetWorld(), ScreenTraceHit.Location, 5.f, FColor::Red, false, 2.f);
+				FinalEndPoint			= TraceHitResult.Location;
 			}
 			
-			AFireBall* Fireball = GetWorld()->SpawnActor<AFireBall>(SocketTransform.GetLocation(), GetActorRotation());
-			Fireball->StartFireBall(CrosshairWorldDirection, this);
+			AFireBall* Fireball = GetWorld()->SpawnActor<AFireBall>(HandSocketTransform.GetLocation(), GetActorRotation());
+			Fireball->StartFireBall(CrosshairDirection, this);
 		}
 	}
 }
@@ -527,10 +524,10 @@ void AMainCharacter::SendMeteor()
 
 void AMainCharacter::SendBurden()
 {
-	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
-	if (BarrelSocket)
+	const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName("HandSocket");
+	if (HandSocket)
 	{
-		const FTransform SocketTransform = BarrelSocket->GetSocketTransform(GetMesh());
+		const FTransform SocketTransform = HandSocket->GetSocketTransform(GetMesh());
 
 		if (MuzzleFlash)
 		{
@@ -665,6 +662,7 @@ void AMainCharacter::SkillChange()
 void AMainCharacter::MeteorAttackCheck()
 {
 	FVector Center = MeteorPosition - FVector(0.0f, 0.0f, 1000.f);
+	
 	TArray<FOverlapResult> HitResults;
 	FCollisionQueryParams CollsionQueryParam(NAME_None, false, this);
 
@@ -858,6 +856,7 @@ void AMainCharacter::SendBlackhole()
 void AMainCharacter::BlackholeAttackCheck()
 {
 	FVector Center = BlackholePosition;
+	// 피격될 몬스터의 정보가 들어갈 Array
 	TArray<FOverlapResult> HitResults;
 	FCollisionQueryParams CollsionQueryParam(NAME_None, false, this);
 
@@ -866,7 +865,7 @@ void AMainCharacter::BlackholeAttackCheck()
 		Center,
 		FQuat::Identity,
 		ECollisionChannel::ECC_Pawn,
-		FCollisionShape::MakeSphere(600.f),
+		FCollisionShape::MakeSphere(BlackholeRange),
 		CollsionQueryParam
 	);
 
@@ -880,14 +879,12 @@ void AMainCharacter::BlackholeAttackCheck()
 
 				if (HitEnemy)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("HIT ACTOR :%s"), *HitResult.Actor->GetName());
 					HitEnemy->OnAttackedBlackhole(BlackholeDamage, this);
 				}
 			}
 		}
 	}
 
-	//DrawDebugSphere(GetWorld(), Center, 600.f, 16, FColor::Green, false, 1.f);
 }
 
 void AMainCharacter::SetHP(float NewHP)
@@ -1249,6 +1246,12 @@ void AMainCharacter::FKeyPressed()
 			SpawnPoint->PressButton();
 		}
 		
+	}
+
+	if (MainAnim && AttackMontage)
+	{
+		MainAnim->Montage_Play(AttackMontage);
+		MainAnim->Montage_JumpToSection(FName("Interact"));
 	}
 }
 

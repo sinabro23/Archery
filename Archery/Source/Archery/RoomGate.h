@@ -32,7 +32,7 @@ private:
 	class USphereComponent* WidgetSphere = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gate", Meta = (AllowPrivateAccess = "true"))
-	int32 MaxCoinAmount = 10000;
+	int32 MaxCoinAmount = 5000;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gate", Meta = (AllowPrivateAccess = "true"))
 	int32 CurrentCoinAmount = 0;
