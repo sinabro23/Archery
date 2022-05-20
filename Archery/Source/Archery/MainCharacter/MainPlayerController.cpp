@@ -6,6 +6,7 @@
 #include "MainCharacter.h"
 #include "Sound/SoundCue.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/GameUserSettings.h"
 
 AMainPlayerController::AMainPlayerController()
 {
@@ -69,6 +70,13 @@ void AMainPlayerController::BeginPlay()
 	if (BGMSound)
 	{
 		UGameplayStatics::PlaySound2D(GetWorld(), BGMSound);
+	}
+
+	if (GEngine)
+	{
+		UGameUserSettings* Setting = GEngine->GetGameUserSettings();
+		Setting->SetFullscreenMode(EWindowMode::Fullscreen);
+		Setting->ApplyResolutionSettings(true);
 	}
 }
 

@@ -14,10 +14,16 @@ public class Archery : ModuleRules
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-		
+
 		// Uncomment if you are using online features
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
-
+		PrivateIncludePaths.Add("Archery");
+		PrivateIncludePaths.Add("Archery/Enemy");
+		PrivateIncludePaths.Add("Archery/ETC");
+		PrivateIncludePaths.Add("Archery/Item");
+		PrivateIncludePaths.Add("Archery/MainCharacter");
+		PrivateIncludePaths.Add("Archery/Skill");
 		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+
 	}
 }
